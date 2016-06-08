@@ -1,5 +1,4 @@
 # MongoDB
-test
 Links:
 - https://docs.mongodb.com/manual/
 - https://docs.mongodb.com/getting-started/java/
