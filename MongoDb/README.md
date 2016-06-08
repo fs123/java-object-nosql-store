@@ -1,4 +1,4 @@
-# MongoDb
+# MongoDB
 
 Links:
 - https://docs.mongodb.com/manual/
