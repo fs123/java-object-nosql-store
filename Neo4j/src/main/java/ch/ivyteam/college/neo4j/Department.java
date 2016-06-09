@@ -5,6 +5,8 @@ import java.util.Set;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import ch.ivyteam.neo4j.domain.Entity;
+
 @NodeEntity
 public class Department extends Entity{
     private String name;

@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.neo4j.ogm.session.Session;
 
-import ch.ivyteam.college.neo4j.Entity;
+import ch.ivyteam.neo4j.domain.Entity;
 
 public abstract class GenericService<T>{
 
@@ -16,12 +16,13 @@ public abstract class GenericService<T>{
     int ENTITY = 1;
   }
   
-  protected final Session session = Neo4jSessionFactory.getInstance().getNeo4jSession();
+  protected final Session session;
   private final Class<T> type;
 
-  public GenericService(Class<T> type)
+  public GenericService(Session session, Class<T> type)
   {
     this.type = type;
+    this.session = session;
   }
 
   public T find(Long id)

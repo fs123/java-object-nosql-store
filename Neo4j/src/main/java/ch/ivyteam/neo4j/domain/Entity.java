@@ -1,4 +1,4 @@
-package ch.ivyteam.college.neo4j;
+package ch.ivyteam.neo4j.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
 
