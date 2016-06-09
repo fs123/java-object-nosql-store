@@ -1,6 +1,6 @@
 package ch.ivyteam.java.object.store;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map.Entry;
 
 import ch.ivyteam.college.neo4j.Entity;
@@ -17,6 +17,12 @@ public class GraphDocs<T extends Entity> extends GenericService<T> implements Do
   public T find(String key)
   {
     return find(Long.valueOf(key));
+  }
+  
+  @Override
+  public Collection<T> findAll()
+  {
+    return getAll();
   }
   
   @Override
@@ -38,7 +44,7 @@ public class GraphDocs<T extends Entity> extends GenericService<T> implements Do
   }
 
   @Override
-  public List<T> query(ch.ivyteam.java.object.store.Documents.Filters filters)
+  public Collection<T> query(ch.ivyteam.java.object.store.Documents.Filters filters)
   {
     StringBuilder cypher = new StringBuilder();
     cypher.append("MATCH (t:"+getEntityType().getSimpleName()+" "+toJsonMap(filters)+")");
