@@ -2,7 +2,7 @@ package ch.ivyteam.java.object.store;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class TestDocumentPersistency
     Documents<Student> studentStore = new GraphDocPersistency().get(Student.class, "");
     Filters dreFilter = new Filters();
     dreFilter.fieldFilter("name", "Dominik Regli");
-    List<Student> matchingStudents = studentStore.query(dreFilter);
+    Collection<Student> matchingStudents = studentStore.query(dreFilter);
     assertThat(matchingStudents).hasSize(1);
   }
   

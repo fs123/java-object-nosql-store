@@ -34,8 +34,8 @@ public abstract class GenericService<T>{
     return find(((Entity) entity).getId());
   }
   
-  public Iterable<T> findAll() {
-      return session.loadAll(getEntityType(), Depth.LIST);
+  public List<T> getAll() {
+      return listify(session.loadAll(getEntityType(), Depth.LIST));
   }
 
   public void delete(Long id) {
