@@ -1,4 +1,4 @@
-package ch.ivyteam.college.neo4j;
+package ch.ivyteam.college.neo4j.v2;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,9 +19,14 @@ public class Student extends Entity
   public String firstname;
   public String lastname;
 
-  public String address;
-  public String zip;
-  public String city;
+// no longer used fields from v1
+//  public String address;
+//  public String zip;
+//  public String city;
+  
+  //new relation from v2
+  @Relationship(type=Relations.LOCATED_AT)
+  public Address address;
 
   public String email;
   

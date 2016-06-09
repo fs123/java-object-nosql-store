@@ -1,4 +1,4 @@
-package ch.ivyteam.college.neo4j;
+package ch.ivyteam.college.neo4j.v2;
 
 import java.util.Set;
 

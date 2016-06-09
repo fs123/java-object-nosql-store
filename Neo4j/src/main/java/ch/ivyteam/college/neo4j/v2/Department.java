@@ -1,4 +1,4 @@
-package ch.ivyteam.college.neo4j;
+package ch.ivyteam.college.neo4j.v2;
 
 import java.util.Set;
 
@@ -8,14 +8,15 @@ import org.neo4j.ogm.annotation.Relationship;
 import ch.ivyteam.neo4j.domain.Entity;
 
 @NodeEntity
-public class Teacher extends Entity{
+public class Department extends Entity{
     private String name;
     
-    @Relationship(type=Relations.TEACHES_CLASS)
-    private Set<Course> courses;
-    
-    @Relationship(type=Relations.TAUGHT_BY, direction=Relationship.INCOMING)
+    @Relationship(type=Relations.CURRICULUM)
     private Set<Subject> subjects;
+    
+    public Department()
+    {
+    }
     
     public String getName()
     {
@@ -24,15 +25,6 @@ public class Teacher extends Entity{
     public void setName(String name)
     {
       this.name = name;
-    }
-    
-    public Set<Course> getCourses()
-    {
-      return courses;
-    }
-    public void setCourses(Set<Course> courses)
-    {
-      this.courses = courses;
     }
     
     public Set<Subject> getSubjects()

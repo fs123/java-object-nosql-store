@@ -3,14 +3,16 @@ package ch.ivyteam.java.object.store;
 import java.util.Collection;
 import java.util.Map.Entry;
 
-import ch.ivyteam.college.neo4j.Entity;
+import org.neo4j.ogm.session.Session;
+
 import ch.ivyteam.neo4j.GenericService;
+import ch.ivyteam.neo4j.domain.Entity;
 
 public class GraphDocs<T extends Entity> extends GenericService<T> implements Documents<T>
 {
-  public GraphDocs(Class<T> type)
+  public GraphDocs(Session session, Class<T> type)
   {
-    super(type);
+    super(session, type);
   }
   
   @Override

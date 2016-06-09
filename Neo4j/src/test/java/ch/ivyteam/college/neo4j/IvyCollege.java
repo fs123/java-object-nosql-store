@@ -14,12 +14,13 @@ public class IvyCollege
     // some data
     Department zug = getDepZug();
     
-    Student pes = new Student();
-    pes.setName("Peter Stöckli");
+    Student pes = createPes();
     Student dre = new Student();
-    dre.setName("Dominik Regli");
+    dre.firstname = "Dominik";
+    dre.lastname = "Regli";
     Student caty = new Student();
-    caty.setName("Caty Hürlimann");
+    caty.firstname = "Caty";
+    caty.lastname = "Hürlimann";
     
     Teacher rwei = new Teacher();
     rwei.setName("Reto Weiss");
@@ -62,7 +63,6 @@ public class IvyCollege
     rise.setSubject(agile);
     
     return rx;
-    //// PERSIST ME !!
   }
 
   public static Department getDepZug()
@@ -70,6 +70,28 @@ public class IvyCollege
     Department zug = new Department();
     zug.setName("Axon.ivy ZUG");
     return zug;
+  }
+
+  @SuppressWarnings("deprecation")
+  public static Student createPes()
+  {
+    Student pes = new Student();
+    pes.firstname = "Peter";
+    pes.lastname = "Stöckli";
+    pes.address = "SomewhereOverTheRainbow 3";
+    pes.zip = "8090";
+    pes.city = "AUAU";
+    pes.birthDate = new Date(1986, 9, 2);
+    pes.settings.put("coolFeature", Boolean.TRUE);
+    pes.settings.put("security", Severity.WARNING);
+    return pes;
+  }
+  
+  private static enum Severity
+  {
+    INFO,
+    WARNING,
+    ERROR
   }
   
   
