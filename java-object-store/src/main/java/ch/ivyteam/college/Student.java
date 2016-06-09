@@ -1,19 +1,24 @@
 package ch.ivyteam.college;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class Student {
-    private String name;
-    private Set<Enrollment> enrollments;
+    public String firstname;
+    public String lastname;
     
-    public String getName()
-    {
-      return name;
-    }
-    public void setName(String name)
-    {
-      this.name = name;
-    }
+    public String address;
+    public String zip;
+    public String city;
+
+    public String email;
+    public Date birthDate;
+    
+    public Map<String, Object> settings = new HashMap<>();
+    
+    private Set<Enrollment> enrollments;
     
     public Set<Enrollment> getEnrollments()
     {
