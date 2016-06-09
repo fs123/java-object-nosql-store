@@ -1,7 +1,7 @@
 package ch.ivyteam.java.object.store;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,11 +12,13 @@ public interface Documents<T>
   
   public T find(String key);
   
+  public Collection<T> findAll();
+  
   public void remove(String key);
   
   public boolean exists(String key);
   
-  public List<T> query(Filters filters);
+  public Collection<T> query(Filters filters);
   
   
   public static class Filters
