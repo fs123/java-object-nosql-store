@@ -1,5 +1,6 @@
 package ch.ivyteam.college.neo4j.v2;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -18,7 +19,7 @@ public class Subject extends Entity{
     private Set<Teacher> teachers;
     
     @Relationship(type=Relations.SUBJECT_TAUGHT, direction = Relationship.INCOMING)
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
     
     public String getName()
     {

@@ -8,5 +8,7 @@ public interface Relations
   String SUBJECT_TAUGHT = "SUBJECT_TAUGHT";
   String TEACHES_CLASS = "TEACHES_CLASS";
   
+  String DEPARTMENT = "DEPARTMENT";
+  String STAFF = "STAFF";
   String LOCATED_AT = "LOCATED_AT";
 }

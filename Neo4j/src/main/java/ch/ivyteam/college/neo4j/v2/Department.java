@@ -1,5 +1,6 @@
 package ch.ivyteam.college.neo4j.v2;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -12,7 +13,7 @@ public class Department extends Entity{
     private String name;
     
     @Relationship(type=Relations.CURRICULUM)
-    private Set<Subject> subjects;
+    private Set<Subject> subjects = new HashSet<>();
     
     public Department()
     {
