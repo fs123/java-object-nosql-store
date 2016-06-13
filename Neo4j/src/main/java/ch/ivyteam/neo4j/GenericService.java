@@ -14,6 +14,7 @@ public abstract class GenericService<T>{
   {
     int LIST = 0;
     int ENTITY = 1;
+    int MAX = Integer.MAX_VALUE;
   }
   
   protected final Session session;
@@ -31,7 +32,7 @@ public abstract class GenericService<T>{
   }
   
   public T persist(T entity) {
-    session.save(entity, Depth.ENTITY);
+    session.save(entity, Depth.MAX);
     return find(((Entity) entity).getId());
   }
   

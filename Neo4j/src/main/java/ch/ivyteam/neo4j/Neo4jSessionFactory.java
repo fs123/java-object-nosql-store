@@ -12,7 +12,7 @@ public class Neo4jSessionFactory {
   private static Neo4jSessionFactory factory = new Neo4jSessionFactory();
 
   public static Neo4jSessionFactory getInstance() {
-      return factory;
+    return factory;
   }
 
   private Neo4jSessionFactory() {
