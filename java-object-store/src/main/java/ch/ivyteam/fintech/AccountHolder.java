@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class AccountHolder
 {
+  public String name;
+  public String type; // enum (cooperative, association, foundation, trust, ...)
   public String uidNumber;
   public Boolean registered;
   public Date dateOfRegistry;
@@ -16,7 +18,7 @@ public class AccountHolder
   public String domicileCountry;
   public String domicileCountryControllingPerson;
   public String language;
-  public String contextPerson;
+  public String contactPerson;
   public String bankBranch;
   
   public Address address;
