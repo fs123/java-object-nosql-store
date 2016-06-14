@@ -18,7 +18,7 @@ import ch.ivyteam.neo4j.Neo4jSessionFactory;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestPerformance
 {
-  private static final int DOSSIERS_PER_YEAR = 100;
+  private static final int DOSSIERS_PER_YEAR = 200_000;
 
   @Test
   public void t1_fillData()
@@ -29,13 +29,14 @@ public class TestPerformance
     stopWatch.start();
     double percentageDone = 0;
     List<Dossier> randomDocs = new ArrayList<>();
-    for(int i=0; i<DOSSIERS_PER_YEAR; i++)
+    int dossiers = DOSSIERS_PER_YEAR*10;
+    for(int i=0; i<dossiers; i++)
     {
       Dossier generated = RandomDossier.generate();
       session.save(generated);
       randomDocs.add(generated);
       
-      double newPercentageDone = ((double)(i+1)/DOSSIERS_PER_YEAR)*100;
+      double newPercentageDone = ((double)(i+1)/dossiers)*100;
       if (Math.floor(newPercentageDone) > percentageDone)
       {
         percentageDone = Math.floor(newPercentageDone);
