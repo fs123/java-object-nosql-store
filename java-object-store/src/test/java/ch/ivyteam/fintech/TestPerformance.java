@@ -3,35 +3,50 @@ package ch.ivyteam.fintech;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import ch.ivyteam.java.object.store.Documents;
+import ch.ivyteam.java.object.store.mysql.JdbcDocumentPersistency;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestPerformance
 {
-
+  private JdbcDocumentPersistency persistency;
+  private Documents<Dossier> documents;
   private static final int DOSSIERS_PER_YEAR = 2_000_000;
 
+  @Before 
+  public void before()
+  {
+	  persistency = new JdbcDocumentPersistency();
+	  documents = persistency.get(Dossier.class, "jdbc:mysql://localhost:3306/nosql?user=root&password=nimda&useSSL=false");
+  }
   @Test
+  @Ignore
   public void t1_fillData()
   {
-    List<Dossier> randomDocs = new ArrayList<>();
     for(int i=0; i<DOSSIERS_PER_YEAR; i++)
     {
-      randomDocs.add(RandomDossier.generate());
+      Dossier dossier = RandomDossier.generate();
+      documents.persist(""+i, dossier);
+      if (i%1000==0)
+      {
+    	  System.out.println(i);
+      }
     }
-    // sorry even java only execution to generate takes ~ 170 seconds! :-(
-    
-    // persist me!
   }
   
   @Test
   public void t2_readComplexDossier()
   {
-    Dossier dossier = new Dossier(); // read me from store;
+    Dossier dossier = documents.find("1234");
     
     assertThat(dossier).isNotNull();
     assertThat(dossier.beneficialOwners.iterator().next().person.firstName).isNotNull();
@@ -40,12 +55,12 @@ public class TestPerformance
   @Test
   public void t3_queryComplexDossier()
   {
-    Dossier dossier = new Dossier(); // query me from store
-    // where beneficiation firstname = "Aaron"
-    // and controllingPersonMgmt.fiduciarayHolssingAssets = true
+	Collection<Dossier> dossiers = documents.query("JSON_EXTRACT(DossierJson, '$.beneficialOwners[*].person.firstName') LIKE '%\"Aaron\"%' AND JSON_EXTRACT(DossierJson, '$.controllingPersonMgmt.fiduciaryHoldingAssets')=false");
+//    Dossier dossier = new Dossier(); // query me from store
+//    // where beneficiation firstname = "Aaron"
+//    // and controllingPersonMgmt.fiduciarayHolssingAssets = true
     
-    assertThat(dossier).isNotNull();
-    assertThat(dossier.beneficialOwners.iterator().next().person.firstName).isNotNull();
+	assertThat(dossiers.size()).isGreaterThanOrEqualTo(1);
   }
   
 }

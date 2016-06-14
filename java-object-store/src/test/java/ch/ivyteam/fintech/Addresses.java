@@ -4,11 +4,16 @@ import java.util.List;
 
 public class Addresses
 {
-  private static List<String> addresses; 
+  private static List<String> addresses;
+private static List<String> read; 
 
   private static List<String> read()
   {
-    return CsvReader.read("jura.csv");
+	if (read == null)
+	{
+		read = CsvReader.read("jura.csv");
+	}
+	return read;
     // downloaded from https://results.openaddresses.io/
   }
   
@@ -27,7 +32,7 @@ public class Addresses
       addresses = read();
     }
     int entry = (int) Math.round(Math.random() * (addresses.size()-1));
-    String address = addresses.remove(entry);
+    String address = addresses.get(entry);
     return toObject(address);
   }
   

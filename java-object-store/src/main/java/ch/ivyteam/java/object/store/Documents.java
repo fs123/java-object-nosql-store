@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import ch.ivyteam.fintech.Dossier;
+
 public interface Documents<T>
 {
   public void persist(String key, T obj);
@@ -20,6 +22,7 @@ public interface Documents<T>
   
   public Collection<T> query(Filters filters);
   
+  public Collection<T> query(String string);
   
   public static class Filters
   {
@@ -40,5 +43,7 @@ public interface Documents<T>
       return filters.isEmpty();
     }
   }
+
+
   
 }
