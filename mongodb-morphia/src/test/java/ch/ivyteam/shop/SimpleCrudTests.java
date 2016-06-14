@@ -15,6 +15,7 @@ import org.mongodb.morphia.query.UpdateResults;
 import com.mongodb.MongoClient;
 
 import ch.ivyteam.shop.model.v1.Product;
+import ch.ivyteam.shop.model.v1.ProductOptions;
 import ch.ivyteam.shop.model.v1.Vendor;
 import ch.ivyteam.shop.model.v1.Vendor.RATING;
 
@@ -166,6 +167,36 @@ public class SimpleCrudTests
     Query<Product> filter2 = datastore.find(Product.class).field("vendor").in(ratingFilter);
     assertThat(filter2.asList()).contains(pb1, pb2);
     assertThat(QueryHelper.doesUseIndex(filter2)).isEqualTo(false);
-    
   }
+  
+  @Test
+  public void testUpdateInDifferentPlacesIsMerged()
+  {
+    // STORE same references
+    Vendor vendor = Vendor.create("Steep and Cheap", RATING.OK);
+    Product p1 = Product.create("Öpfel", 33, vendor, "Option");
+    p1.weekendOptions = new ProductOptions();
+    p1.weekendOptions.specialOfferText = "Special Offer";
+
+    datastore.save(vendor, p1);
+
+    Product readP11 = datastore.find(Product.class, "id", p1.id).get();
+    Product readP12 = datastore.find(Product.class, "id", p1.id).get();
+
+    assertThat(readP11).isNotSameAs(readP12);
+
+    readP11.options.specialOfferText = "New Text";
+    readP12.weekendOptions.specialOfferText = "New Text Weekend";
+
+    UpdateOperations<Product> updateOperations = datastore.createUpdateOperations(Product.class).set("options", readP11.options);
+    datastore.update(readP11, updateOperations);
+
+    UpdateOperations<Product> updateOperations2 = datastore.createUpdateOperations(Product.class).set("weekendOptions", readP12.weekendOptions);
+    datastore.update(readP12, updateOperations2);
+
+    readP11 = datastore.find(Product.class, "id", p1.id).get();
+    assertThat(readP11.options.specialOfferText).isEqualTo("New Text");
+    assertThat(readP11.weekendOptions.specialOfferText).isEqualTo("New Text Weekend");
+  }
+
 }
