@@ -2,9 +2,7 @@ package ch.ivyteam.fintech.neo4j;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -28,18 +26,19 @@ public class TestPerformance
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     double percentageDone = 0;
-    List<Dossier> randomDocs = new ArrayList<>();
+    
     int dossiers = DOSSIERS_PER_YEAR*10;
     for(int i=0; i<dossiers; i++)
     {
       Dossier generated = RandomDossier.generate();
       session.save(generated);
-      randomDocs.add(generated);
+      session.detachNodeEntity(generated.getId()); // relax
       
       double newPercentageDone = ((double)(i+1)/dossiers)*100;
       if (Math.floor(newPercentageDone) > percentageDone)
       {
         percentageDone = Math.floor(newPercentageDone);
+        session.clear(); // let my memory chill
         System.out.println("filled "+percentageDone+"% of data in "+stopWatch.getTime()+" ms");
       }
     }
