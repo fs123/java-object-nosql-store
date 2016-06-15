@@ -10,12 +10,12 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.RandomUtils;
 
-public class RandomDossier
+public class RandomDossierWithOnlyFullIndex
 {
 
-  public static Dossier generate()
+  public static DossierWithOnlyFullIndex generate()
   {
-    Dossier dossier = new Dossier();
+    DossierWithOnlyFullIndex dossier = new DossierWithOnlyFullIndex();
     dossier.accountHolder = createAccountHolder();
     dossier.beneficialOwners = createBeneficialOwners(dossier);
     dossier.controllingPersonMgmt = controllingMgmt(dossier);
@@ -23,12 +23,12 @@ public class RandomDossier
     return dossier;
   }
 
-  private static LegitimateManagement legitimateMgmt(Dossier dossier)
+  private static LegitimateManagement legitimateMgmt(DossierWithOnlyFullIndex DossierWithOnlyFullIndex)
   {
     LegitimateManagement mgmt = new LegitimateManagement();
     mgmt.onlyLegitimatesAreBO = RandomUtils.nextInt(0, 2) == 0;
     
-    BeneficialOwner benifician = randomOf(dossier.beneficialOwners);
+    BeneficialOwner benifician = randomOf(DossierWithOnlyFullIndex.beneficialOwners);
     Legitimate copy = new Legitimate();
     copy.person = benifician.person;
     copy.address = benifician.address;
@@ -46,11 +46,11 @@ public class RandomDossier
     return mgmt;
   }
 
-  private static ControllingPersonManagement controllingMgmt(Dossier dossier)
+  private static ControllingPersonManagement controllingMgmt(DossierWithOnlyFullIndex DossierWithOnlyFullIndex)
   {
     ControllingPersonManagement mgmt = new ControllingPersonManagement();
     
-    BeneficialOwner benifician = randomOf(dossier.beneficialOwners);
+    BeneficialOwner benifician = randomOf(DossierWithOnlyFullIndex.beneficialOwners);
     ControllingPerson copied = new ControllingPerson();
     copied.person = benifician.person;
     copied.address = benifician.address;
@@ -95,17 +95,17 @@ public class RandomDossier
     return holder;
   }
   
-  private static Set<BeneficialOwner> createBeneficialOwners(Dossier dossier)
+  private static Set<BeneficialOwner> createBeneficialOwners(DossierWithOnlyFullIndex DossierWithOnlyFullIndex)
   {
     Set<BeneficialOwner> benificial = new HashSet<>();
     for(int i=0; i<RandomUtils.nextInt(2, 5); i++)
     {
-      benificial.add(createBeneficialOwner(dossier));
+      benificial.add(createBeneficialOwner(DossierWithOnlyFullIndex));
     }
     return benificial;
   }
   
-  private static BeneficialOwner createBeneficialOwner(Dossier dossier)
+  private static BeneficialOwner createBeneficialOwner(DossierWithOnlyFullIndex DossierWithOnlyFullIndex)
   {
     BeneficialOwner beneficial = new BeneficialOwner();
     beneficial.person = randomPerson();

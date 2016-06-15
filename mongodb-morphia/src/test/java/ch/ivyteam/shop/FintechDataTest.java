@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -75,7 +74,7 @@ public class FintechDataTest {
 		// 7 THREAD     : > Created 2000000 dossierts in 299244ms ( 5min)=> 6688/s with 7 threads
 	}
 	
-	@Test @Ignore
+	@Test
 	public void t2_readComplexDossier() {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -86,7 +85,7 @@ public class FintechDataTest {
 				.limit(2)
 				.asList();
 
-		// > Found 2 dossiers in 43ms/47ms/44ms/45ms/52ms (without indexs)
+		// > Found 2 dossiers in 43ms/47ms/44ms/45ms/52ms
 		System.out.println("Found " + dossiers.size() + " dossiers in "+ stopWatch.getTime() + "ms");
 		
 		assertThat(dossiers).hasSize(2);
@@ -107,11 +106,11 @@ public class FintechDataTest {
 		;
 		 
 		List<Dossier> dossiers = filter.asList();
-		
+
 		stopWatch.stop();
 		
-		// Without index on A,B,C > Found 25 dossiers in 5295ms/5394ms/5266ms/5346ms/5244ms
-		// With    index on A     > Found 25 dossiers in 20ms/13ms/106ms/105ms
+		// Without index      > Found 25 dossiers in 5295ms/5394ms/5266ms/5346ms/5244ms
+		// With    index on A > Found 25 dossiers in 20ms/13ms/106ms/105ms
 		System.out.println("Found " + dossiers.size() + " dossiers in "+ stopWatch.getTime() + "ms [Keesler]");
 		
 		if (dossiers.isEmpty()) {
@@ -141,12 +140,5 @@ public class FintechDataTest {
 		// > Found 660 dossiers in 764ms/661ms/669ms/616ms (with one index which includes the two first fields of the query)
 		// > Found 660 dossiers in 24ms (just query to count of result, without creating the dossiers) 
 		System.out.println("Found " + countAll + " dossiers in "+ stopWatch.getTime() + "ms [Catina]");
-		
-//		if (dossiers.isEmpty()) {
-//			return;
-//		}
-//		
-//		System.out.println("First dossier: ");
-//		System.out.println(ToStringBuilder.reflectionToString(dossiers.get(0)));
 	}
 }

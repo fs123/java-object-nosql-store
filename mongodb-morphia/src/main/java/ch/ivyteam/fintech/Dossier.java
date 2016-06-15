@@ -25,9 +25,9 @@ import ch.ivyteam.shop.model.v1.AddToStringHashCodeAndEquals;
   ),
 	
   @Index(options = @IndexOptions(name = "t3_queryComplexDossierIndexOnEachField_A") , 
-		fields = @Field("beneficialOwners.person.lastName")),
-	@Index(options = @IndexOptions(name = "t3_queryComplexDossierIndexOnEachField_B") , 
-			fields = @Field("legitimateMgmt.onlyLegitimatesAreBO")),
+		fields = @Field("beneficialOwners.person.lastName"))
+//	@Index(options = @IndexOptions(name = "t3_queryComplexDossierIndexOnEachField_B") , 
+//			fields = @Field("legitimateMgmt.onlyLegitimatesAreBO")),
 //	@Index(options = @IndexOptions(name = "t3_queryComplexDossierIndexOnEachField_C") , 
 //			fields = @Field("controllingPersonMgmt.controllingPersons.address.zipCode")),
 //
