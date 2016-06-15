@@ -1,0 +1,125 @@
+{  
+   "_id":ObjectId("575fd0a5e6090a1ec880deba"),
+   "className":"ch.ivyteam.fintech.Dossier",
+   "accountHolder":{  
+      "name":"Garland Lynn",
+      "uidNumber":"aa5de580-7756-46ae-b8c0-b8989c6ac385",
+      "dateOfRegistry":      ISODate("1989-02-16T05:49:45.359      Z"),
+      "yearOfIncorporation":1985,
+      "numberOfEmployees":73039,
+      "dateOfSupply":      ISODate("2004-03-13T17:16:40.700      Z"),
+      "domicileCountryControllingPerson":"Chieko Mango",
+      "contactPerson":"Marianela Kolenda",
+      "address":{  
+         "street":"chemin de la halle 115",
+         "zipCode":"39220",
+         "city":"Prémanon",
+         "country":"France"
+      }
+   },
+   "beneficialOwners":[  
+      {  
+         "person":{  
+            "title":"MR",
+            "firstName":"Catina",
+            "lastName":"Trimble",
+            "birthDate":            ISODate("1990-05-24T12:47:52.836            Z")
+         },
+         "address":{  
+            "street":"chemin de la halle 115",
+            "zipCode":"39220",
+            "city":"Prémanon",
+            "country":"France"
+         }
+      },
+      {  
+         "person":{  
+            "title":"MR",
+            "firstName":"Lovella",
+            "lastName":"Keesler",
+            "birthDate":            ISODate("1975-09-16T03:10:54.052            Z")
+         },
+         "address":{  
+            "stre 
+et":"chemin de la halle 115",
+            "zipCode":"39220",
+            "city":"Prémanon",
+            "country":"France"
+         }
+      },
+      {  
+         "person":{  
+            "title":"MS",
+            "firstName":"Chris",
+            "lastName":"Flitsch",
+            "birthDate":            ISODate("2009-09-16T14:37:13.162            Z")
+         },
+         "address":{  
+            "street":"chemin de la halle 115",
+            "zipCode":"39220",
+            "city":"Prémanon",
+            "country":"France"
+         }
+      }
+   ],
+   "controllingPersonMgmt":{  
+      "fiduciaryHoldingAssets":false,
+      "controllingPersons":[  
+         {  
+            "share":81,
+            "person":{  
+               "title":"MS",
+               "firstName":"Jorge",
+               "lastName":"Daviau",
+               "birthDate":               ISODate("2006-06-12T03:31:23.692               Z")
+            },
+            "address":{  
+               "street":"route des jouvencelles 1057",
+               "zipCode":"39220",
+               "city":"Prémanon",
+               "country":"France"
+            }
+         },
+         {  
+            "share":70,
+            "person":{  
+               "title":"MR",
+               "firstName":"Catina",
+               "lastName":"Trimble",
+               "birthDate":               ISODate("1990-05-24T12:47:52.836               Z")
+            },
+            "address":{  
+               "street":"chemin de la halle 115",
+               "zipCode":"39220",
+               "city":"Prémanon",
+               "country":"France"
+            }
+         }
+      ]
+   },
+   "legitimateMgmt":{  
+      "onlyLegitimatesAreBO":true,
+      "legitimates":[  
+         {  
+            "person":{  
+               "title":"MS",
+               "firstName":"Thea",
+               "lastName":"Strobeck",
+               "birthDate":               ISODate("1998-02-21T00:56:52.155               Z")
+            },
+            "contact":{  
+               "landlinePhone":"106515125317",
+               "mobilePhone":"988209444533",
+               "businessPhone":"181821258315",
+               "eMail":"I.Cayton@???V?.com"
+            },
+            "address":{  
+               "street":"route des jouvencelles 1057",
+               "zipCode":"39220",
+               "city":"Prémanon",
+               "country":"France"
+            }
+         }
+      ]
+   }
+}
