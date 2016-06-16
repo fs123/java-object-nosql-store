@@ -45,13 +45,16 @@ public class TestPerformance
   @Test
   public void t2_readComplexDossier()
   {
-    Dossier dossier = documents.find("1234000");
+    Dossier dossier = documents.find("1234070");
     
     assertThat(dossier).isNotNull();
     assertThat(dossier.beneficialOwners.iterator().next().person.firstName).isNotNull();
   }
   
   @Test
+  // Seems not to work: Create Index: CREATE INDEX idxBenOwn ON Dossier USING gin ((DossierJson -> 'beneficialOwners'));
+  // Seems not to work: Create Index: CREATE INDEX idxBenOwnFN2 ON Dossier USING gin ((DossierJson -> 'beneficialOwners' -> 'person' -> 'firstName'));
+  // Seems to work: CREATE INDEX idxgin ON Dossier USING gin (DossierJson);
   public void t3_queryComplexDossier()
   {
 	Collection<Dossier> dossiers = documents.query("DossierJson @> '{\"beneficialOwners\" : [{\"person\": {\"firstName\": \"Aaron\"}}]}'::jsonb AND DossierJson->'controllingPersonMgmt'->'fiduciaryHoldingAssets' = 'false'::jsonb");
@@ -60,19 +63,32 @@ public class TestPerformance
   
   
   @Test
-  public void t3_queryComplexDossierOnlyFirstname()
+  public void t4_queryComplexDossierOnlyFirstname()
   {
 	Collection<Dossier> dossiers = documents.query("DossierJson @> '{\"beneficialOwners\" : [{\"person\": {\"firstName\": \"Aaron\"}}]}'::jsonb");
 	assertThat(dossiers.size()).isGreaterThanOrEqualTo(1);
   }
   
-  
+  @Test
+  public void t5_queryComplexDossierBothNames()
+  {
+	Collection<Dossier> dossiers = documents.query("DossierJson @> '{\"beneficialOwners\" : [{\"person\": {\"firstName\": \"Aaron\", \"lastName\": \"Trant\"}}]}'::jsonb AND DossierJson->'controllingPersonMgmt'->'fiduciaryHoldingAssets' = 'false'::jsonb");
+	assertThat(dossiers.size()).isEqualTo(1);
+  }
   
   @Test
-  public void t3_queryComplexDossierForZipCode()
+  public void t6_queryComplexDossierForZipCodeSlow()
   {
 	Collection<Dossier> dossiers = documents.query("DossierJson->'accountHolder'->'address'->>'zipCode' = '39110'");
 	assertThat(dossiers.size()).isGreaterThanOrEqualTo(1);
   }
+  
+  @Test
+  public void t7_queryComplexDossierForZipCodeFaster()
+  {
+	Collection<Dossier> dossiers = documents.query("DossierJson @> '{\"accountHolder\" : {\"address\": {\"zipCode\": \"39110\"}}}'::jsonb");
+	assertThat(dossiers.size()).isGreaterThanOrEqualTo(1);
+  }
+  
   
 }
