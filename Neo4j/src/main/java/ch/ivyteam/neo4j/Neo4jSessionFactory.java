@@ -9,6 +9,7 @@ public class Neo4jSessionFactory {
   private static final SessionFactory sessionFactory = new SessionFactory("ch.ivyteam.college.neo4j", COMMON);
   private static final SessionFactory sessionFactoryV2 = new SessionFactory("ch.ivyteam.college.neo4j.v2", COMMON);
   private static final SessionFactory finFactory = new SessionFactory("ch.ivyteam.fintech.neo4j", COMMON); 
+  private static final SessionFactory serializationFactory = new SessionFactory("ch.ivyteam.serialize.neo4j", COMMON); 
   
   private static Neo4jSessionFactory factory = new Neo4jSessionFactory();
 
@@ -30,6 +31,11 @@ public class Neo4jSessionFactory {
   public Session getFinSession()
   {
     return finFactory.openSession();
+  }
+
+  public Session getSerializationSession()
+  {
+    return serializationFactory.openSession();
   }
   
 }
