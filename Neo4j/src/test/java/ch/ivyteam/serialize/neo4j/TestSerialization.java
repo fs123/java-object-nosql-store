@@ -3,6 +3,7 @@ package ch.ivyteam.serialize.neo4j;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.neo4j.ogm.session.Session;
 
 import ch.ivyteam.java.object.store.Documents;
 import ch.ivyteam.java.object.store.GraphDocs;
@@ -14,6 +15,7 @@ import ch.ivyteam.serialize.neo4j.JavaTyping.Zoo;
 
 public class TestSerialization
 {
+  private static Session session;
 
   @Test
   public void recursiveReferences()
@@ -21,6 +23,8 @@ public class TestSerialization
     Documents<Recursion> docStore = storeOf(Recursion.class);
     Recursion recursion = Recursion.createRecursion();
     docStore.persist(String.valueOf(recursion.getId()), recursion);
+    
+    session.clear(); // ensure that we really read persistent data!
     
     Recursion newRecursion = docStore.find(String.valueOf(recursion.getId()));
     assertThat(newRecursion.key).isEqualTo(recursion.key);
@@ -35,6 +39,8 @@ public class TestSerialization
     Documents<Zoo> docStore = storeOf(Zoo.class);
     Zoo zoo = JavaTyping.createZoo();
     docStore.persist(String.valueOf(zoo.getId()), zoo);
+    
+    session.clear(); // ensure that we really read persistent data!
     
     Zoo newZoo = docStore.find(String.valueOf(zoo.getId()));
     assertThat(newZoo).isNotNull();
@@ -53,6 +59,8 @@ public class TestSerialization
     Documents<SameReference> docStore = storeOf(SameReference.class);
     docStore.persist(String.valueOf(reference.getId()), reference);
     
+    session.clear(); // ensure that we really read persistent data!
+    
     SameReference newRef = docStore.find(String.valueOf(reference.getId()));
     assertThat(newRef.key).isEqualTo("Start");
     assertThat(newRef.ref1.key).isEqualTo("X");
@@ -62,7 +70,16 @@ public class TestSerialization
   @SuppressWarnings({"unchecked", "rawtypes"})
   private static <T> Documents<T> storeOf(Class<T> type)
   {
-    return new GraphDocs(Neo4jSessionFactory.getInstance().getSerializationSession(), type);
+    session = Neo4jSessionFactory.getInstance().getSerializationSession();
+    return new GraphDocs(session, type)
+    {
+      @Override
+      public Object find(Long id)
+      {
+        int DEPTH = 3;
+        return session.load(type, id, DEPTH);
+      }
+    };
   }
   
 }

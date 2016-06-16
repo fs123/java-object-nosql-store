@@ -24,6 +24,8 @@ public class SameReference extends Entity {
 	public TypeX ref1;
 	public TypeX ref2;
 	
+	public SameReference(){}
+	
 	public SameReference(String key) {
 		this.key = key;
 	}
@@ -31,6 +33,9 @@ public class SameReference extends Entity {
 	@NodeEntity
 	public static class TypeX extends Entity {
 		public String key;
+		
+		public TypeX(){}
+		
 		public TypeX(String key) {
 			this.key = key;
 		}

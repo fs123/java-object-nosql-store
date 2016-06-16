@@ -25,6 +25,8 @@ public class JavaTyping {
 	@NodeEntity
 	public static class Lion extends Entity implements Animal {
 		public String key;
+		
+		public Lion(){}
 		public Lion(String key) {
 			this.key = key;
 		}
@@ -33,6 +35,7 @@ public class JavaTyping {
 	@NodeEntity
 	public static class Elephant extends Entity implements Animal {
 		public String key;
+		public Elephant(){}
 		public Elephant(String key) {
 			this.key = key;
 		}
@@ -43,6 +46,7 @@ public class JavaTyping {
 		public String key;
 		@GraphId
 		public Long id;
+		public Labrador(){}
 		public Labrador(String key) {
 			this.key = key;
 		}

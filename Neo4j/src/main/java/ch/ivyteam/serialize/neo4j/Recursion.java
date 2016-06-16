@@ -23,16 +23,24 @@ public class Recursion extends Entity {
 		return r;
 	}
 	
-	public final String key;
+	public String key;
 	public TypeA start;
+	
+	public Recursion()
+	{
+	}
+	
 	public Recursion(String key) {
 		this.key = key;
 	}
 	
 	@NodeEntity
 	public static class TypeA extends Entity{
-		public final String key;
+		public String key;
 		public TypeB b;
+
+		public TypeA(){}
+		
 		public TypeA(String key) {
 			this.key = key;
 		}
@@ -40,8 +48,11 @@ public class Recursion extends Entity {
 
 	@NodeEntity
 	public static class TypeB extends Entity {
-		public final String key;
+		public String key;
 		public TypeA a;
+		
+		public TypeB(){}
+		
 		public TypeB(String key) {
 			this.key = key;
 		}
