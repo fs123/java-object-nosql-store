@@ -6,7 +6,9 @@ import org.junit.Test;
 
 import ch.ivyteam.java.object.store.Documents;
 import ch.ivyteam.java.object.store.postgres.JdbcDocumentPersistency;
+import ch.ivyteam.java.object.store.serialization.GsonSerializer;
 import ch.ivyteam.java.object.store.serialization.JacksonSerializer;
+import ch.ivyteam.java.object.store.serialization.JsonIOSerializer;
 import ch.ivyteam.serialize.JavaTyping.Elephant;
 import ch.ivyteam.serialize.JavaTyping.Labrador;
 import ch.ivyteam.serialize.JavaTyping.Lion;
@@ -21,6 +23,8 @@ public class TestSerialization
   public void recursiveReferences()
   {
     Documents<Recursion> docStore = storeOf(Recursion.class);
+    
+    
     Recursion recursion = Recursion.createRecursion();
     String key = "123";
     docStore.persist(key, recursion);
@@ -29,7 +33,8 @@ public class TestSerialization
     assertThat(newRecursion.key).isEqualTo(recursion.key);
     assertThat(newRecursion.start.key).isEqualTo(recursion.start.key);
     assertThat(newRecursion.start.b.key).isEqualTo(recursion.start.b.key);
-    assertThat(newRecursion.start.b.a.b).isEqualTo(recursion.start.b.a.b);
+    assertThat(newRecursion.start.b.a.b).isEqualToComparingFieldByFieldRecursively(recursion.start.b.a.b);
+    assertThat(newRecursion.start.b).isSameAs(newRecursion.start.b.a.b);
   }
   
   @Test
@@ -67,7 +72,7 @@ public class TestSerialization
   private static <T> Documents<T> storeOf(Class<T> type)
   {
 	JdbcDocumentPersistency persistency = new JdbcDocumentPersistency();
-	return persistency.get(type, PostgresCon.connectionString, new JacksonSerializer<T>(type));
+	return persistency.get(type, PostgresCon.connectionString, new JsonIOSerializer<T>(type));
   }
   
 

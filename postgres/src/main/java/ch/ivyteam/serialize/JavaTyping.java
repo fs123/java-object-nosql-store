@@ -33,6 +33,9 @@ public class JavaTyping {
 		public Lion(String key) {
 			this.key = key;
 		}
+		public Lion() {
+			
+		}
 	}
 	
 	public static class Elephant implements Animal {
@@ -40,12 +43,18 @@ public class JavaTyping {
 		public Elephant(String key) {
 			this.key = key;
 		}
+		public Elephant() {
+			
+		}
 	}
 	
 	public static class Labrador extends Dog {
 		public String key;
 		public Labrador(String key) {
 			this.key = key;
+		}
+		public Labrador() {
+			
 		}
 	}
 	

@@ -57,5 +57,6 @@ public class Recursion {
 		public TypeB() {
 			
 		}
+
 	}
 }
