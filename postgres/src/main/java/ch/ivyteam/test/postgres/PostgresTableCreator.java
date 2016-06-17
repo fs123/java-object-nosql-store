@@ -13,11 +13,14 @@ public class PostgresTableCreator {
 	}
 	
 	public void createTables() {
-		createTestTable();
+		createTestTable("Dossier");
+		createTestTable("Recursion");
+		createTestTable("Zoo");
+		createTestTable("SameReference");
 	}
-
-	private void createTestTable() {
-		String sql = "CREATE TABLE Dossier (DossierId VARCHAR(200) primary key, DossierJson JSONB)";
+	
+	private void createTestTable(String tableName) {
+		String sql = "CREATE TABLE " + tableName  + " (" + tableName  + "Id VARCHAR(200) primary key, " + tableName  + "Json JSONB)";
 		
 		try (PreparedStatement stmt = connection.prepareStatement(sql))
 		{
@@ -27,7 +30,8 @@ public class PostgresTableCreator {
 		{
 			throw new RuntimeException(ex);
 		}
-		System.out.println("Table 'Dossier' created");
+		System.out.println("Table '" + tableName  + "' created");
 	}
+
 
 }

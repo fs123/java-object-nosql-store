@@ -9,23 +9,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import ch.ivyteam.java.object.store.Documents;
+import ch.ivyteam.java.object.store.serialization.Serializer;
+import ch.ivyteam.java.object.store.serialization.JacksonSerializer;
 
 public class PostgresDocuments<T> implements Documents<T> 
 {
 	private String config;
 	private Class<T> type;
 	private Connection connection;
-	private ObjectMapper mapper = new ObjectMapper();
+	private Serializer<T> serializer; 
 
 	public PostgresDocuments(Class<T> type, String config) 
 	{
+		this(type, config, new JacksonSerializer<T>(type));
+	}
+
+	public PostgresDocuments(Class<T> type, String config, Serializer<T> serializer2) {
 		this.type = type;
 		this.config = config;
+		serializer = serializer2;
 		try 
 		{
 			this.connection = DriverManager.getConnection(config);
@@ -34,13 +37,12 @@ public class PostgresDocuments<T> implements Documents<T>
 		{
 			throw new RuntimeException(ex);
 		}
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	}
 
 	@Override
 	public void persist(String key, T obj) 
 	{
-		String serialized = serialize(obj);
+		String serialized = serializer.serialize(obj);
 		if (exists(key))
 		{
 			update(key, serialized);
@@ -79,18 +81,6 @@ public class PostgresDocuments<T> implements Documents<T>
 		}
 	}
 
-	private String serialize(T obj) 
-	{
-		try 
-		{
-			return mapper.writeValueAsString(obj);
-		} 
-		catch (JsonProcessingException ex) 
-		{
-			throw new RuntimeException(ex);
-		}
-	}
-
 	private String getTableName()
 	{
 		return type.getSimpleName();
@@ -106,7 +96,7 @@ public class PostgresDocuments<T> implements Documents<T>
 			{
 				if (result.next())
 				{
-					return deserialize(result.getString(1));
+					return serializer.deserialize(result.getString(1));
 				}
 				throw new RuntimeException("Object with key "+ key+" not found");
 			}
@@ -115,18 +105,6 @@ public class PostgresDocuments<T> implements Documents<T>
 		{
 			throw new RuntimeException(ex);
 		}
-	}
-
-	private T deserialize(String json) 
-	{
-		try 
-		{
-			return mapper.readValue(json, type);
-		} 
-		catch (Exception e) 
-		{
-			throw new RuntimeException(e);
-		} 
 	}
 
 	@Override
@@ -175,7 +153,7 @@ public class PostgresDocuments<T> implements Documents<T>
 				List<T> dossiers = new ArrayList<>();
 				while (result.next())
 				{
-					dossiers.add(deserialize(result.getString(1)));
+					dossiers.add(serializer.deserialize(result.getString(1)));
 				}
 				return dossiers;
 			}
