@@ -1,6 +1,7 @@
 package ch.ivyteam.fintech;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
@@ -10,6 +11,7 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
+import org.mongodb.morphia.annotations.Version;
 
 import ch.ivyteam.shop.model.v1.AddToStringHashCodeAndEquals;
 
@@ -48,9 +50,11 @@ public class Dossier extends AddToStringHashCodeAndEquals
 {
   @Id
   public ObjectId id;
-
+	@Version
+	public long v;
+	
   public AccountHolder accountHolder;
-  public Set<BeneficialOwner> beneficialOwners = new HashSet<>();
+  public LinkedHashSet<BeneficialOwner> beneficialOwners = new LinkedHashSet<>();
   public ControllingPersonManagement controllingPersonMgmt;
   public LegitimateManagement legitimateMgmt;
 }

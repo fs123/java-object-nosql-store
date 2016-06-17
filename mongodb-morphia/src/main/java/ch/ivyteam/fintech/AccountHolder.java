@@ -2,6 +2,8 @@ package ch.ivyteam.fintech;
 
 import java.util.Date;
 
+import org.mongodb.morphia.annotations.Version;
+
 import ch.ivyteam.shop.model.v1.AddToStringHashCodeAndEquals;
 
 public class AccountHolder extends AddToStringHashCodeAndEquals

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -95,9 +96,9 @@ public class RandomDossier
     return holder;
   }
   
-  private static Set<BeneficialOwner> createBeneficialOwners(Dossier dossier)
+  private static LinkedHashSet<BeneficialOwner> createBeneficialOwners(Dossier dossier)
   {
-    Set<BeneficialOwner> benificial = new HashSet<>();
+  	LinkedHashSet<BeneficialOwner> benificial = new LinkedHashSet<>();
     for(int i=0; i<RandomUtils.nextInt(2, 5); i++)
     {
       benificial.add(createBeneficialOwner(dossier));
