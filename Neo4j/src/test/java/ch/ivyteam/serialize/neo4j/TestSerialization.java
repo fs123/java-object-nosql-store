@@ -8,6 +8,7 @@ import org.neo4j.ogm.session.Session;
 import ch.ivyteam.java.object.store.Documents;
 import ch.ivyteam.java.object.store.GraphDocs;
 import ch.ivyteam.neo4j.Neo4jSessionFactory;
+import ch.ivyteam.serialize.neo4j.JavaTyping.Dog;
 import ch.ivyteam.serialize.neo4j.JavaTyping.Elephant;
 import ch.ivyteam.serialize.neo4j.JavaTyping.Labrador;
 import ch.ivyteam.serialize.neo4j.JavaTyping.Lion;
@@ -50,6 +51,13 @@ public class TestSerialization
     assertThat(((Elephant)newZoo.b).key).isEqualTo("Benjamin");
     assertThat(newZoo.c).isInstanceOf(Labrador.class);
     assertThat(((Labrador)newZoo.c).key).isEqualTo("Lassi");
+    
+    assertThat(newZoo.e).isEqualTo(zoo.e);
+    Dog newFirstDog = newZoo.e.get("first");
+    Dog firstDog = zoo.e.get("first");
+    assertThat(((Labrador)newFirstDog).likesToPlayWith)
+      .isEqualTo(((Labrador)firstDog).likesToPlayWith);
+    assertThat(newZoo.d).isEqualTo(zoo.d);
   }
   
   @Test
