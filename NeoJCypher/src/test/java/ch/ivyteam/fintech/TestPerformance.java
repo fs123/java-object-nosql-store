@@ -7,9 +7,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import ch.ivyteam.java.object.jcypher.CypherDocs;
-import ch.ivyteam.merge.TestMerging;
+import ch.ivyteam.java.object.jcypher.DBAccess;
 import iot.jcypher.concurrency.Locking;
-import iot.jcypher.database.IDBAccess;
 import iot.jcypher.domain.DomainAccessFactory;
 import iot.jcypher.domain.IDomainAccess;
 
@@ -22,7 +21,6 @@ public class TestPerformance
   @Test
   public void t1_fillData()
   {
-    TestMerging.realNeo4j();
     //List<Dossier> randomDocs = new ArrayList<>();
     CypherDocs<Dossier> store = storeOf(Dossier.class);
     for(int i=0; i<DOSSIERS_PER_YEAR; i++)
@@ -60,8 +58,7 @@ public class TestPerformance
   
   private static <T> CypherDocs<T> storeOf(Class<T> type)
   {
-    IDBAccess embedded = TestMerging.realNeo4j();
-    IDomainAccess domainAccess = DomainAccessFactory.createDomainAccess(embedded, "MERGE");
+    IDomainAccess domainAccess = DomainAccessFactory.createDomainAccess(DBAccess.localInstance(), "MERGE");
     domainAccess.setLockingStrategy(Locking.NONE);
     return new CypherDocs<>(domainAccess, type);
   }

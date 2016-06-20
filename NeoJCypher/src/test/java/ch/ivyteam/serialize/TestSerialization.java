@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 import ch.ivyteam.java.object.jcypher.CypherDocs;
-import ch.ivyteam.merge.TestMerging;
+import ch.ivyteam.java.object.jcypher.DBAccess;
 import ch.ivyteam.serialize.JavaTyping.Elephant;
 import ch.ivyteam.serialize.JavaTyping.Labrador;
 import ch.ivyteam.serialize.JavaTyping.Lion;
@@ -72,7 +72,7 @@ public class TestSerialization
   
   private static <T> CypherDocs<T> storeOf(Class<T> type)
   {
-    IDomainAccess domainAccess = DomainAccessFactory.createDomainAccess(TestMerging.realNeo4j(), "SERIALIZATION");
+    IDomainAccess domainAccess = DomainAccessFactory.createDomainAccess(DBAccess.inMemory(), "SERIALIZATION");
     return new CypherDocs<>(domainAccess, type);
   }
   

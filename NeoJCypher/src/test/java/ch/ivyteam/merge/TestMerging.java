@@ -2,8 +2,6 @@ package ch.ivyteam.merge;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Properties;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -13,12 +11,9 @@ import ch.ivyteam.fintech.Dossier;
 import ch.ivyteam.fintech.Person;
 import ch.ivyteam.fintech.RandomDossier;
 import ch.ivyteam.java.object.jcypher.CypherDocs;
+import ch.ivyteam.java.object.jcypher.DBAccess;
 import ch.ivyteam.java.object.store.Documents;
 import iot.jcypher.concurrency.Locking;
-import iot.jcypher.database.DBAccessFactory;
-import iot.jcypher.database.DBProperties;
-import iot.jcypher.database.DBType;
-import iot.jcypher.database.IDBAccess;
 import iot.jcypher.domain.DomainAccessFactory;
 import iot.jcypher.domain.IDomainAccess;
 
@@ -152,18 +147,12 @@ public class TestMerging
   
   private static <T> CypherDocs<T> storeOf(Class<T> type)
   {
-    IDBAccess embedded = realNeo4j();
-    domainAccess = DomainAccessFactory.createDomainAccess(embedded, "MERGE");
-    domainAccess.setLockingStrategy(Locking.OPTIMISTIC);
+    //if (domainAccess == null)
+    {
+      domainAccess = DomainAccessFactory.createDomainAccess(DBAccess.inMemory(), "MERGE");
+      domainAccess.setLockingStrategy(Locking.OPTIMISTIC);
+    }
     return new CypherDocs<>(domainAccess, type);
-  }
-
-  public static IDBAccess realNeo4j()
-  {
-    Properties remoteProperties = new Properties();
-    remoteProperties.put(DBProperties.SERVER_ROOT_URI, "http://@localhost:7474");
-    IDBAccess embedded = DBAccessFactory.createDBAccess(DBType.REMOTE, remoteProperties, "neo4j", "X.ivyi1.k");
-    return embedded;
   }
   
 }
