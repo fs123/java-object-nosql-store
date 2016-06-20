@@ -16,20 +16,15 @@ import iot.jcypher.domain.IDomainAccess;
 public class TestPerformance
 {
 
-  private static final int DOSSIERS_PER_YEAR = 2_000_000;
+  private static final int DOSSIERS_PER_YEAR = 200_000;
 
   @Test
   public void t1_fillData()
   {
-    //List<Dossier> randomDocs = new ArrayList<>();
     CypherDocs<Dossier> store = storeOf(Dossier.class);
-    for(int i=0; i<DOSSIERS_PER_YEAR; i++)
+    for(int i=0; i<DOSSIERS_PER_YEAR*10; i++)
     {
       store.persist(null, RandomDossier.generate());
-      if (i%1000 == 0)
-      {
-        System.out.println("wrote 1'000 dossiers");
-      }
     }
     // sorry even java only execution to generate takes ~ 170 seconds! :-(
     
