@@ -24,7 +24,7 @@ public class TestPerformance
     CypherDocs<Dossier> store = storeOf(Dossier.class);
     for(int i=0; i<DOSSIERS_PER_YEAR*10; i++)
     {
-      store.persist(null, RandomDossier.generate());
+      Dossier dossier = RandomDossier.generate();
     }
     // sorry even java only execution to generate takes ~ 170 seconds! :-(
     
