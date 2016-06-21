@@ -9,7 +9,7 @@ import java.sql.DriverManager;
  * JSON Functions: https://www.postgresql.org/docs/9.5/static/functions-json.html
  */
 public class PostgresCon {
-	public final static String connectionString = "jdbc:postgresql://localhost:5433/testjson?user=postgres&stringtype=unspecified"; // Default Postgres Port is 5432
+	public final static String connectionString = "jdbc:postgresql://localhost:5432/testjson?user=postgres&stringtype=unspecified"; // Default Postgres Port is 5432
 
 	public static void main(String[] args) {
 		try {

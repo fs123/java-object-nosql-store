@@ -53,6 +53,13 @@ public class TestSerialization
     assertThat(((Elephant)newZoo.b).key).isEqualTo("Benjamin");
     assertThat(newZoo.c).isInstanceOf(Labrador.class);
     assertThat(((Labrador)newZoo.c).key).isEqualTo("Lassi");
+    
+    assertThat(newZoo.d).containsExactlyElementsOf(zoo.d);
+    assertThat(newZoo.e.entrySet()).containsExactlyElementsOf(zoo.e.entrySet());
+    assertThat(((Labrador)newZoo.e.get("first")).likesToPlayWith)
+  	.isEqualTo(((Labrador)zoo.e.get("first")).likesToPlayWith);
+    
+    assertThat(newZoo.e.get("first")).isNotSameAs(zoo.e.get("first"));
   }
   
   @Test
