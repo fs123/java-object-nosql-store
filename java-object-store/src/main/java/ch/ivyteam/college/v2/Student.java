@@ -1,20 +1,26 @@
-package ch.ivyteam.college;
+package ch.ivyteam.college.v2;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import ch.ivyteam.college.Enrollment;
+
 public class Student {
-    public int sId;
+// changed type from int to long:
+    public long sId; 
   
     public String firstname;
     public String lastname;
     
-    public String address;
-    public String zip;
-    public String city;
-
+// removed:
+//    public String address;
+//    public String zip;
+//    public String city;
+// added:
+    public Address address;
+    
     public String email;
     public Date birthDate;
     
