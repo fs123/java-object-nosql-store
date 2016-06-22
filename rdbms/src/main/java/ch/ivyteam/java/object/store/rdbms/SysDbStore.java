@@ -65,7 +65,7 @@ public class SysDbStore<T> implements Documents<T>
   private void insert(String key, String serialized)
   {
     try (PreparedStatement stmt = connection
-            .prepareStatement("INSERT INTO `" + DocumentSchema.TABLE_NAME + "` "
+            .prepareStatement("INSERT INTO " + DocumentSchema.TABLE_NAME + " "
                             + "(id, type, json) VALUES (?, ?, ?)"))
     {
       stmt.setString(1, key);
@@ -82,7 +82,7 @@ public class SysDbStore<T> implements Documents<T>
   private void insert(String serialized)
   {
     try (PreparedStatement stmt = connection
-            .prepareStatement("INSERT INTO `" + DocumentSchema.TABLE_NAME + "` "
+            .prepareStatement("INSERT INTO " + DocumentSchema.TABLE_NAME + " "
                             + "(type, json) VALUES (?, ?)"))
     {
       stmt.setString(1, type.getName());
@@ -99,8 +99,8 @@ public class SysDbStore<T> implements Documents<T>
   public T find(String key)
   {
     try (PreparedStatement stmt = connection.prepareStatement(
-            "SELECT json FROM `" + DocumentSchema.TABLE_NAME + "` "
-            + "WHERE id = ? AND `type`= ?"))
+            "SELECT json FROM " + DocumentSchema.TABLE_NAME + " "
+            + "WHERE id = ? AND type= ?"))
     {
       stmt.setString(1, key);
       stmt.setString(2, type.getName());
@@ -123,7 +123,7 @@ public class SysDbStore<T> implements Documents<T>
   public Collection<T> findAll()
   {
     try (PreparedStatement stmt = connection.prepareStatement(
-            "SELECT json FROM `" + DocumentSchema.TABLE_NAME + "` WHERE `type`= ?"))
+            "SELECT json FROM " + DocumentSchema.TABLE_NAME + " WHERE type= ?"))
     {
       stmt.setString(1, type.getName());
       return jsonQueryToDocs(stmt);
@@ -138,8 +138,8 @@ public class SysDbStore<T> implements Documents<T>
   public void remove(String key)
   {
     try (PreparedStatement stmt = connection
-            .prepareStatement("DELETE FROM `" + DocumentSchema.TABLE_NAME + "` "
-                    + "WHERE id = ? AND `type` = ?"))
+            .prepareStatement("DELETE FROM " + DocumentSchema.TABLE_NAME + " "
+                    + "WHERE id = ? AND type = ?"))
     {
       stmt.setString(1, key);
       stmt.setString(2, type.getName());
@@ -155,8 +155,8 @@ public class SysDbStore<T> implements Documents<T>
   public boolean exists(String key)
   {
     try (PreparedStatement stmt = connection
-            .prepareStatement("SELECT COUNT(*) FROM `" + DocumentSchema.TABLE_NAME + "` "
-                    + "WHERE id = ? AND `type` = ?"))
+            .prepareStatement("SELECT COUNT(*) FROM " + DocumentSchema.TABLE_NAME + " "
+                    + "WHERE id = ? AND type = ?"))
     {
       stmt.setString(1, key);
       stmt.setString(2, type.getName());
@@ -181,8 +181,8 @@ public class SysDbStore<T> implements Documents<T>
     }
 
     StringBuilder sql = new StringBuilder("SELECT json ")
-         .append("FROM `" + DocumentSchema.TABLE_NAME + "` ")
-         .append("WHERE `type`= ?");
+         .append("FROM " + DocumentSchema.TABLE_NAME + " ")
+         .append("WHERE type= ?");
     for(int i=0; i<filters.getFieldFilters().size(); i++)
     {
       if (i == 0)
@@ -193,7 +193,7 @@ public class SysDbStore<T> implements Documents<T>
       {
         sql.append(" OR ");
       }
-      sql.append("`json` LIKE ?");
+      sql.append("json LIKE ?");
     }
     sql.append(")");
     

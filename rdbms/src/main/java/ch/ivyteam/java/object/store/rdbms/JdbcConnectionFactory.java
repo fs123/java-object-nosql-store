@@ -7,16 +7,16 @@ import java.sql.SQLException;
 public class JdbcConnectionFactory
 {
 
-  public static Connection createMySql(String db, String user, String password)
+  public static Connection createMySql(String host, String db, String user, String password)
   {
     loadClass("com.mysql.jdbc.Driver");
-    return connect("jdbc:mysql://localhost/"+db+"?user="+user+"&password="+password);
+    return connect("jdbc:mysql://"+host+"/"+db+"?user="+user+"&password="+password);
   }
   
-  public static Connection createPostgres(String db, String user)
+  public static Connection createPostgres(String hostAndPort, String db, String user, String password)
   {
     loadClass("org.postgresql.Driver");
-    return connect("jdbc:postgresql://localhost:5432/"+db+"?user="+user+"&stringtype=unspecified");
+    return connect("jdbc:postgresql://"+hostAndPort+"/"+db+"?user="+user+"&password="+password+"&stringtype=unspecified");
   }
   
   private static void loadClass(String driver)

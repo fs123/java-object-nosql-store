@@ -3,11 +3,18 @@ package ch.ivyteam.java.object.store;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 import ch.ivyteam.college.Student;
 import ch.ivyteam.java.object.store.Documents.Filters;
@@ -16,10 +23,9 @@ import ch.ivyteam.java.object.store.rdbms.DocumentSchema.DbType;
 import ch.ivyteam.java.object.store.rdbms.SysDbStore;
 import ch.ivyteam.java.object.store.rdbms.TstConnectionFactory;
 
+@RunWith(Parameterized.class)
 public class TestDocumentPersistency
 {
-  private Connection connection = TstConnectionFactory.mysql();
-  
   @Test
   public void storeAndLoad()
   {
@@ -80,16 +86,38 @@ public class TestDocumentPersistency
     return new SysDbStore<>(type, connection);
   }
   
+  @Parameter
+  public DbType dbType;
+  
+  @Parameters(name = "{index}: rdbms - {0}")
+  public static Collection<Object[]> data() {
+    List<Object[]> d = new ArrayList<>();
+    d.add(new Object[]{DbType.MYSQL});
+    d.add(new Object[]{DbType.POSTGRES});
+    return d;
+  }
+  
+  private Connection connection;
+  
   @Before
   public void setup()
   {
-    new DocumentSchema(connection).create(DbType.MYSQL);
+    connection =  TstConnectionFactory.forDbms(dbType);
+    new DocumentSchema(connection).create(dbType);
   }
   
   @After
   public void tearDown()
   {
-    new DocumentSchema(connection).drop(DbType.MYSQL);
+    new DocumentSchema(connection).drop(dbType);
+    try
+    {
+      connection.close();
+    }
+    catch (SQLException ex)
+    {
+      throw new RuntimeException(ex);
+    }
   }
   
 }
