@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -92,8 +93,10 @@ public class TestDocumentPersistency
   @Parameters(name = "{index}: rdbms - {0}")
   public static Collection<Object[]> data() {
     List<Object[]> d = new ArrayList<>();
-    d.add(new Object[]{DbType.MYSQL});
-    d.add(new Object[]{DbType.POSTGRES});
+    for(DbType type : Arrays.asList(DbType.values()))
+    {
+      d.add(new Object[]{type});
+    }
     return d;
   }
   

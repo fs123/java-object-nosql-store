@@ -19,8 +19,7 @@ public class DocumentSchema
   public static enum DbType
   {
     MYSQL,
-    POSTGRES,
-    MSSQL;
+    POSTGRES
   }
 
   public void create(DbType type)
