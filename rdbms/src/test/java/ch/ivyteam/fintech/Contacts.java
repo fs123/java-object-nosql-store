@@ -17,7 +17,7 @@ public class Contacts
 
   public static String randomMail()
   {
-    return RandomStringUtils.random(1, true, false) + "." + Names.getRandomLastname()+"@"+RandomStringUtils.random(5)+".com";
+    return RandomStringUtils.random(1, true, false) + "." + Names.getRandomLastname()+"@"+RandomStringUtils.random(5, true, true)+".com";
   }
   
   public static String randomPhone()
