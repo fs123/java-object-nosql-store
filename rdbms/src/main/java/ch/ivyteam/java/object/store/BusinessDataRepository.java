@@ -1,32 +1,29 @@
 package ch.ivyteam.java.object.store;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Enhanced object store Business Data
+ * Draft of an object store for Business Data
  * 
  * @since 22.06.2016
  * @param <T>
  */
-public interface Documents2<T>
+public interface BusinessDataRepository<T>
 {
   public Long persist(T obj);
-  
+  public Set<Long> persist(List<T> obj);
   public void merge(Long key, T obj);
   
   public T find(Long key);
-  
   public Set<T> findAll();
-  
-  public void delete(Long key);
-  
+  public Set<T> query(Filters filters); // make it fluent!
   public boolean exists(Long key);
   
-  public Set<T> query(Filters filters);
-  
+  public void delete(Long key);
   
   public static class Filters
   {
