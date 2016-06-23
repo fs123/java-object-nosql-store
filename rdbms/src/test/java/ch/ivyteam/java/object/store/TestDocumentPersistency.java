@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,10 +19,9 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.ivyteam.college.Student;
-import ch.ivyteam.java.object.store.Documents.Filters;
 import ch.ivyteam.java.object.store.rdbms.DocumentSchema;
 import ch.ivyteam.java.object.store.rdbms.DocumentSchema.DbType;
-import ch.ivyteam.java.object.store.rdbms.SysDbStore;
+import ch.ivyteam.java.object.store.rdbms.SysDbRepository;
 import ch.ivyteam.java.object.store.rdbms.TstConnectionFactory;
 
 @RunWith(Parameterized.class)
@@ -30,29 +30,30 @@ public class TestDocumentPersistency
   @Test
   public void storeAndLoad()
   {
-    Documents<Dossier> docStore = storeOf(Dossier.class);
+    BusinessDataRepository<Dossier> docStore = storeOf(Dossier.class);
    
     Dossier doc = new Dossier();
-    docStore.persist("2", doc);
-    Dossier loadedDoc = docStore.find("2");
+    long key = 2;
+    docStore.merge(key, doc);
+    Dossier loadedDoc = docStore.find(key);
     
     assertThat(doc).isEqualToComparingFieldByFieldRecursively(loadedDoc);
-    assertThat(docStore.exists("2")).isTrue();
-    docStore.remove("2");
-    assertThat(docStore.exists("2")).isFalse();
+    assertThat(docStore.exists(key)).isTrue();
+    docStore.delete(key);
+    assertThat(docStore.exists(key)).isFalse();
   }
   
   @Test
   public void loadAll()
   {
-    Documents<Dossier> dossierStore = storeOf(Dossier.class);
-    dossierStore.persist(null, new Dossier());
-    dossierStore.persist(null, new Dossier());
+    BusinessDataRepository<Dossier> dossierStore = storeOf(Dossier.class);
+    dossierStore.persist(new Dossier());
+    dossierStore.persist(new Dossier());
     
-    Documents<Student> studentStore = storeOf(Student.class);
+    BusinessDataRepository<Student> studentStore = storeOf(Student.class);
     Student student = new Student();
     student.firstname = "Reguel";
-    studentStore.persist(null, student);
+    studentStore.persist(student);
     
     Collection<Dossier> dossiers = dossierStore.findAll();
     assertThat(dossiers).hasSize(2);
@@ -65,16 +66,32 @@ public class TestDocumentPersistency
   @Test
   public void query()
   {
-    Documents<Dossier> store = storeOf(Dossier.class);
+    BusinessDataRepository<Dossier> store = storeOf(Dossier.class);
     Dossier myDossier = new Dossier();
     myDossier.name = "Hi Again";
-    store.persist(null, myDossier);
+    store.persist(myDossier);
     
-    Filters filters = new Filters();
-    filters.fieldFilter("name", "Hi Again");
+    BusinessDataRepository.Filters filters = new BusinessDataRepository.Filters();
+    filters.field("name", "Hi Again");
     Collection<Dossier> dossiers = store.query(filters);
     assertThat(dossiers).hasSize(1);
     assertThat(dossiers.iterator().next()).isEqualToComparingFieldByField(myDossier);
+  }
+  
+  @Test
+  public void bulkInsert()
+  {
+    BusinessDataRepository<Dossier> repository = storeOf(Dossier.class);
+    Long maxId = repository.persist(new Dossier());
+    assertThat(maxId).isEqualTo(1);
+    
+    Dossier a = new Dossier();
+    a.name = "first";
+    Dossier b = new Dossier();
+    b.name = "second";
+    List<Dossier> dossiers = Arrays.asList(a, b);
+    Set<Long> ids = repository.persist(dossiers);
+    assertThat(ids).containsExactly(2l,3l);
   }
   
   public static class Dossier
@@ -82,9 +99,9 @@ public class TestDocumentPersistency
     public String name = "Hello";
   }
   
-  private <T> Documents<T> storeOf(Class<T> type)
+  private <T> BusinessDataRepository<T> storeOf(Class<T> type)
   {
-    return new SysDbStore<>(type, connection);
+    return new SysDbRepository<>(type, connection);
   }
   
   @Parameter

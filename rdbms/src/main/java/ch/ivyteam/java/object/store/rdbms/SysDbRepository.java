@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.mysql.jdbc.Statement;
+
 import ch.ivyteam.java.object.store.BusinessDataRepository;
 import ch.ivyteam.java.object.store.serialize.JsonIOSerializer;
 import ch.ivyteam.java.object.store.serialize.Serializer;
@@ -31,13 +33,21 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
   public Long persist(T obj)
   {
     String json = serializer.serialize(obj);
-    try (PreparedStatement stmt = connection
+    try (@SuppressWarnings("static-access")
+      PreparedStatement stmt = connection
             .prepareStatement("INSERT INTO " + DocumentSchema.TABLE_NAME + " "
-                            + "(type, json) VALUES (?, ?)"))
+                            + "(type, json) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS))
     {
       stmt.setString(1, type.getName());
       stmt.setString(2, json);
-      return (long) stmt.executeUpdate();
+      stmt.executeUpdate();
+      
+      Set<Long> ids = getGeneratedKeys(stmt);
+      if (ids.size() == 1)
+      {
+        return ids.iterator().next();
+      }
+      throw new RuntimeException("Failed to resolve inserted ID");
     }
     catch (SQLException ex)
     {
@@ -53,9 +63,10 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
       return Collections.emptySet();
     }
     
-    try (PreparedStatement stmt = connection
+    try (@SuppressWarnings("static-access")
+    PreparedStatement stmt = connection
             .prepareStatement("INSERT INTO " + DocumentSchema.TABLE_NAME + " "
-                            + "(type, json) VALUES (?, ?)"))
+                            + "(type, json) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS))
     {
       for(T obj : objs)
       {
@@ -63,19 +74,26 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
         stmt.setString(2, serializer.serialize(obj));
         stmt.addBatch();
       }
-      
-      int[] result = stmt.executeBatch();
-      Set<Long> ids = new HashSet<>(result.length);
-      for(int id : result)
-      {
-        ids.add((long)id);
-      }
-      return ids;
+      stmt.executeBatch();
+      return getGeneratedKeys(stmt);
     }
     catch (SQLException ex)
     {
       throw new RuntimeException(ex);
     }
+  }
+
+  private static Set<Long> getGeneratedKeys(PreparedStatement stmt) throws SQLException
+  {
+    Set<Long> ids = new HashSet<>();
+    try(ResultSet res = stmt.getGeneratedKeys())
+    {
+      while(res.next())
+      {
+        ids.add(res.getLong(1));
+      }
+    }
+    return ids;
   }
 
   @Override
