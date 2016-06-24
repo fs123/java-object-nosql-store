@@ -75,13 +75,15 @@ public class DocumentSchema
     catch (SQLException ex)
     { // schema does not exist
       connection.createStatement().execute("CREATE TABLE `"+TABLE_NAME+"` ("
-                + " `id` INT(10) NOT NULL AUTO_INCREMENT,"
+                + " `id` BIGINT(20) NOT NULL AUTO_INCREMENT,"
                 + "`type` VARCHAR(500) NOT NULL,"
                 + "`json` TEXT NULL,"
-                + "PRIMARY KEY (`id`)"
+                + "PRIMARY KEY (`id`),"
+                + "INDEX `type` (`type`),"
+                + "FULLTEXT INDEX `json` (`json`)"
               + ")"
               + "COLLATE='utf8_general_ci'"
-              + "ENGINE=InnoDB;");
+              + "ENGINE=MyISAM;"); // for InnoDB MySql 5.6 is required!
     }
   }
   
