@@ -152,16 +152,12 @@ public interface BusinessDataRepository
      * Fields stored in the db, besides the actual object
      */
     public static interface MetaData<T> {
-<<<<<<< HEAD
       Long getId();
-=======
-      long getId();
       
       /**
        * Incremented on each db update.
        * used to handle concurrent modification and prevent data loss
        */
->>>>>>> stash
       long getVersion();
       String getTypeRaw();
       Class<T> getType();
