@@ -1,6 +1,7 @@
 package ch.ivyteam.java.object.store.memory;
 
 import ch.ivyteam.java.object.store.BusinessDataRepository;
+import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessDataRepositoryExtended.Updater;
 
 public class MemoryBusinessDataRepository implements BusinessDataRepository
 {
@@ -48,4 +49,10 @@ public class MemoryBusinessDataRepository implements BusinessDataRepository
     return new MemoryQuery<T>(getStore());
   }
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> boolean update(Long id, Updater<T> updater)
+	{
+		return find(id).update((Updater<Object>) updater).successfully();
+	}
 }

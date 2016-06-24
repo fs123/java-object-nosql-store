@@ -68,8 +68,8 @@ public class TestBusinessDataRepository
     BusinessData<Dossier> businessData = repository.create(RandomDossier.generate());
     businessData.save();
 
-    Thread t1 = new Thread(() -> {businessData.lockAndUpdate(deleteBeneficians());});
-    Thread t2 = new Thread(() -> {businessData.lockAndUpdate(modifyCpm());});
+    Thread t1 = new Thread(() -> {businessData.update(deleteBeneficians());});
+    Thread t2 = new Thread(() -> {businessData.update(modifyCpm());});
     t1.start();
     t2.start();
     t1.join();

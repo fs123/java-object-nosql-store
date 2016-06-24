@@ -14,15 +14,14 @@ import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessDataRepositor
 public interface BusinessDataRepository
 {
 	/**
-	 * TODO: Does it save to the database? (Use case for not storing on create: same behavior for update and create (e.g. JSF Dialog)
+	 * Creates a new Business data, but does not store it.
 	 */
   <T> BusinessData<T> create(T obj);
   
 
   /**
    * Retrieves BusinessData
-   * TODO: why find? find, query / Spring Data: getOne
-   * @param id TODO: switch to ValueObject
+   * @param id TODO: switch to ValueObject??
    * @return Null if not exists
    */
   <T> BusinessData<T> find(Long id);
@@ -101,12 +100,11 @@ public interface BusinessDataRepository
       /**
        * Prio 2
        * Streaming api to narrow down on the result
-       * TODO: rename
        */
-      public static interface DocumentResImpl<T>
+      public static interface QueryResultExtended<T>
       {
-        Stream<BusinessData<T>> docStream();
-        Stream<T> dataStream();
+        Stream<BusinessData<T>> dataStream();
+        Stream<T> objectStream();
       }
     }
   }
@@ -124,13 +122,13 @@ public interface BusinessDataRepository
     
     public static interface UpdateResults
     {
-    	long getUpdatedCount();
+    	long updatedCount();
     }
 
     @FunctionalInterface
     public static interface Updater<T>
     {
-      void update(T object); 
+      void update(T object);
     }
   }
   
@@ -143,9 +141,10 @@ public interface BusinessDataRepository
     
     T object();
     
-    public static interface DocumentImpl
+    public static interface BusinessDataImpl
     {
-      String rawData();
+      String raw();
+      // getJsonObject / getJsonNode / ...
     }
     
     /**
@@ -168,18 +167,18 @@ public interface BusinessDataRepository
      * is the same as the version store in the current BusinessData meta.
      * returns true if successful
      */
-    boolean save();
+    UpdateResult save();
     
     /**
      * stores the object regardless of the version
      * false, if object was already deleted
      */
-    boolean overwrite();
+    UpdateResult overwrite();
     
     /**
      * false, if object was already deleted
      */
-    boolean delete();
+    UpdateResult delete();
     
     /**
      * Checks if the current version is the same as in the DB AND the entry still exists
@@ -187,19 +186,24 @@ public interface BusinessDataRepository
     boolean isUpToDate();
     
     /**
-     * false, if object was deleted
+     * false, if Business object was deleted
+     * Reloads the data from the DB. If changed, we only hold serialized data and it will be deserialized by first usage
      */
-    boolean reload();
+    UpdateResult reload();
 
     /**
-     * Maybe useless, because we have it (now) on the Repo.
+     * Question?: Is it useful, when we return the 'new' deserialized object?
+     * 
+     * 1. read from db
+     * 2. execute update
+     * 3. refresh()
      */
-    void update(Updater<T> updater);
-    
-    /**
-     * Do we need this? (maybe move to repo)
-     */
-    void lockAndUpdate(Updater<T> updater);
-    
+    UpdateResult update(Updater<T> updater);
+
+    public static interface UpdateResult
+    {
+    	boolean successfully();
+    	// void throwBusinessError(String bpmError)
+    }
   }
 }
