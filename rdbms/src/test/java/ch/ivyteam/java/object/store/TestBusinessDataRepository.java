@@ -12,8 +12,12 @@ import ch.ivyteam.fintech.Dossier;
 import ch.ivyteam.fintech.Person;
 import ch.ivyteam.fintech.RandomDossier;
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData;
+<<<<<<< HEAD
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData.Updater;
 import ch.ivyteam.java.object.store.memory.MemoryBusinessDataRepository;
+=======
+import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessDataRepositoryExtended.Updater;
+>>>>>>> stash
 
 public class TestBusinessDataRepository
 {
