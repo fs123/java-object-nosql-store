@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.Map.Entry;
 
-import ch.ivyteam.java.object.store.BusinessDataRepository;
 import ch.ivyteam.java.object.store.Documents;
+import ch.ivyteam.java.object.store.ObjectStore;
 
 public class SysDbStore<T> implements Documents<T>
 {
@@ -38,7 +38,7 @@ public class SysDbStore<T> implements Documents<T>
   @Override
   public Collection<T> findAll()
   {
-    return repository.findAll();
+    return repository.findAll().values();
   }
 
   @Override
@@ -56,12 +56,12 @@ public class SysDbStore<T> implements Documents<T>
   @Override
   public Collection<T> query(ch.ivyteam.java.object.store.Documents.Filters filtersV1)
   {
-    return repository.query(toV2(filtersV1));
+    return repository.query(toV2(filtersV1)).values();
   }
 
-  private static BusinessDataRepository.Filters toV2(ch.ivyteam.java.object.store.Documents.Filters filtersV1)
+  private static ObjectStore.Filters toV2(ch.ivyteam.java.object.store.Documents.Filters filtersV1)
   {
-    BusinessDataRepository.Filters filterV2 = new BusinessDataRepository.Filters();
+    ObjectStore.Filters filterV2 = new ObjectStore.Filters();
     for(Entry<String, String> filterV1 : filtersV1.getFieldFilters())
     {
       filterV2.field(filterV1.getKey(), filterV1.getValue());

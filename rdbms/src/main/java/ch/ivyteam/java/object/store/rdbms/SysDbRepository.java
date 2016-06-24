@@ -5,18 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import com.mysql.jdbc.Statement;
 
-import ch.ivyteam.java.object.store.BusinessDataRepository;
+import ch.ivyteam.java.object.store.ObjectStore;
 import ch.ivyteam.java.object.store.serialize.JsonIOSerializer;
 import ch.ivyteam.java.object.store.serialize.Serializer;
 
-public class SysDbRepository<T> implements BusinessDataRepository<T>
+public class SysDbRepository<T> implements ObjectStore<T>
 {
   private final Class<T> type;
   private final Connection connection;
@@ -174,10 +176,12 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
   }
 
   @Override
-  public Set<T> findAll()
+  public Map<Long, T> findAll()
   {
     try (PreparedStatement stmt = connection.prepareStatement(
-            "SELECT json FROM " + DocumentSchema.TABLE_NAME + " WHERE type= ?"))
+            "SELECT id,json "
+            + "FROM " + DocumentSchema.TABLE_NAME + " "
+            + "WHERE type= ?"))
     {
       stmt.setString(1, type.getName());
       return jsonQueryToDocs(stmt);
@@ -189,14 +193,14 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
   }
 
   @Override
-  public Set<T> query(ch.ivyteam.java.object.store.BusinessDataRepository.Filters filters)
+  public Map<Long, T> query(ch.ivyteam.java.object.store.ObjectStore.Filters filters)
   {
     if (filters.isEmpty())
     {
-      return Collections.emptySet();
+      return Collections.emptyMap();
     }
 
-    StringBuilder sql = new StringBuilder("SELECT json ")
+    StringBuilder sql = new StringBuilder("SELECT id,json ")
          .append("FROM " + DocumentSchema.TABLE_NAME + " ")
          .append("WHERE type= ?");
     for(int i=0; i<filters.getFieldFilters().size(); i++)
@@ -271,14 +275,16 @@ public class SysDbRepository<T> implements BusinessDataRepository<T>
     }
   }
   
-  private Set<T> jsonQueryToDocs(PreparedStatement stmt) throws SQLException
+  private Map<Long, T> jsonQueryToDocs(PreparedStatement stmt) throws SQLException
   {
     try (ResultSet result = stmt.executeQuery())
     {
-      Set<T> docs = new HashSet<>();
+      Map<Long, T> docs = new HashMap<>();
       while (result.next() == true)
       {
-        docs.add(serializer.deserialize(result.getString(1)));
+        Long id = result.getLong(1);
+        T object = serializer.deserialize(result.getString(2));
+        docs.put(id, object);
       }
       return docs;
     }

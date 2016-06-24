@@ -2,6 +2,7 @@ package ch.ivyteam.java.object.store;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ch.ivyteam.fintech.AccountHolder;
@@ -12,15 +13,18 @@ import ch.ivyteam.fintech.Person;
 import ch.ivyteam.fintech.RandomDossier;
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData;
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData.Updater;
+import ch.ivyteam.java.object.store.memory.MemoryBusinessDataRepository;
 
 public class TestBusinessDataRepository
 {
+
+  private MemoryBusinessDataRepository repository;
 
   @Test
   public void create()
   {
     Dossier dossier = RandomDossier.generate();
-    BusinessData<Dossier> businessData = repository().create(dossier);
+    BusinessData<Dossier> businessData = repository.create(dossier);
     
     AccountHolder holder = new AccountHolder();
     holder.name = "Mr. Cool";
@@ -31,14 +35,26 @@ public class TestBusinessDataRepository
   @Test
   public void loadAndDestroy()
   {
-    BusinessData<Dossier> bd = repository().find(123l);
+    BusinessData<Dossier> dossier = repository.create(RandomDossier.generate());
+    dossier.save();
+    assertThat(repository.exists(dossier.getMeta().getId())).isTrue();    
+    
+    BusinessData<Dossier> bd = repository.find(dossier.getMeta().getId());
     bd.delete();
+    assertThat(repository.exists(dossier.getMeta().getId())).isFalse();
   }
   
   @Test
   public void query()
   {
-    Dossier aronsDossier = repository().query(Dossier.class)
+    Dossier myDossier = RandomDossier.generate();
+    BeneficialOwner bo = new BeneficialOwner();
+    bo.person = new Person();
+    bo.person.firstName = "Aron";
+    myDossier.beneficialOwners.add(bo);
+    repository.create(myDossier).save();
+    
+    Dossier aronsDossier = repository.query(Dossier.class)
               .field("firstName").isEqualTo("Aron")
               .execute().objects().get(0);
     
@@ -47,30 +63,22 @@ public class TestBusinessDataRepository
   }
   
   @Test
-  public void updateConcurrent()
+  public void updateConcurrent() throws InterruptedException
   {
-    BusinessData<Dossier> businessData = repository().find(456l);
-    Runnable r1 = () -> {businessData.lockAndUpdate(deleteBeneficians());};
-    Runnable r2 = () -> {businessData.lockAndUpdate(modifyCpm());};
-    new Thread(r1).start();
-    new Thread(r2).start();
-    
-    ch.ivyteam.fintech.Address newAddress = null;
-
-    businessData.update(dossier -> dossier.accountHolder.address = newAddress);
-    
-    
-
-    businessData.update(dossier -> dossier.accountHolder.numberOfEmployees++);
-    
-    
-    BeneficialOwner newOwner = null;
-    businessData.update(dossier -> dossier.beneficialOwners.add(newOwner));
-    
-    // dgauch: simplify it for ivy script users!
-    //businessData.updateAndOverride("beneficialOwners.person.address"); 
-    
+    BusinessData<Dossier> businessData = repository.create(RandomDossier.generate());
     businessData.save();
+
+    Thread t1 = new Thread(() -> {businessData.lockAndUpdate(deleteBeneficians());});
+    Thread t2 = new Thread(() -> {businessData.lockAndUpdate(modifyCpm());});
+    t1.start();
+    t2.start();
+    t1.join();
+    t2.join();
+    
+    BusinessData<Dossier> persistentData = repository.find(businessData.getMeta().getId());
+    Dossier dossier = persistentData.object();
+    assertThat(dossier.accountHolder.name).isEqualTo("The new Boss");
+    assertThat(dossier.beneficialOwners).isEmpty();
   }
   
   private static Updater<Dossier> modifyCpm()
@@ -92,10 +100,16 @@ public class TestBusinessDataRepository
   @Test
   public void metaData()
   {
-    BusinessData<Dossier> businessData = repository().find(333l);
+    BusinessData<Dossier> businessData = repository.create(RandomDossier.generate());
+    businessData.save();
     
-    // long work...
+    // work in other thread....
+    BusinessData<Dossier> businessData2 = repository.find(businessData.getMeta().getId());
+    businessData2.object().accountHolder.name = "Ooops I'm new";
+    businessData2.save();
+    // end work of other
     
+    assertThat(businessData.isUpToDate()).isFalse();
     if (!businessData.isUpToDate())
     {
       businessData.reload();
@@ -106,9 +120,10 @@ public class TestBusinessDataRepository
   }
   
 
-  public static BusinessDataRepository repository()
+  @Before
+  public void setUp()
   {
-    return new MemoryBusinessDataRepository();
+    repository = new MemoryBusinessDataRepository();
   }
   
 }

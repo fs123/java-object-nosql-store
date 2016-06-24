@@ -66,7 +66,7 @@ public interface BusinessDataRepository
     }
     
     public static interface MetaData<T> {
-      long getId();
+      Long getId();
       long getVersion();
       String getTypeRaw();
       Class<T> getType();
