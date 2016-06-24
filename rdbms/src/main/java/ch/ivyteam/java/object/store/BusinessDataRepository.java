@@ -1,48 +1,91 @@
 package ch.ivyteam.java.object.store;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
- * Draft of an object store for Business Data
+ * Draft of an object repository for Business Data
  * 
  * @since 22.06.2016
- * @param <T>
  */
-public interface BusinessDataRepository<T>
+public interface BusinessDataRepository
 {
-  public Long persist(T obj);
-  public Set<Long> persist(List<T> obj);
-  public void merge(Long key, T obj);
+  public <T> BusinessData<T> create(T obj);
+  public <T> BusinessData<T> find(Long id);
+  public boolean exists(Long id);
   
-  public T find(Long key);
-  public Set<T> findAll();
-  public Set<T> query(Filters filters); // make it fluent!
-  public boolean exists(Long key);
+  /**
+   * <h1 style="color:red">Preliminary!</h1>
+   * @param resultType
+   * @return fluid query
+   */
+  public <T> FluentQuery<T> query(Class<T> resultType);
   
-  public void delete(Long key);
-  
-  public static class Filters
+  public static interface FluentQuery<T>
   {
-    private final Map<String, String> filters = new HashMap<>();
+    public FieldOperator<T> field(String fieldName);
     
-    public Filters field(String fieldName, String value)
+    public static interface FieldOperator<T>
     {
-      filters.put(fieldName, value);
-      return this;
+      public FluentQuery<T> contains(String value);
+      public FluentQuery<T> isEqualTo(String value);
+      public FluentQuery<T> isEqualTo(Number value);
     }
     
-    public Set<Entry<String, String>> getFieldFilters()
+    public QueryResult<T> execute();
+
+    public static interface QueryResult<T> 
     {
-      return filters.entrySet();
+      List<T> objects();
+      List<BusinessData<T>> data();
+      
+      public static interface DocumentResImpl<T>
+      {
+        Stream<BusinessData<T>> docStream();
+        Stream<T> dataStream();
+      }
+    }
+  }
+  
+  public static interface Bd2RepImpl<T>
+  {
+    public Set<Long> create(List<T> obj); 
+    public Set<T> findAll();
+    public void delete(Long id);
+  }
+  
+  public static interface BusinessData<T> {
+    MetaData<T> getMeta();
+    
+    T object();
+    
+    public static interface DocumentImpl
+    {
+      String rawData();
     }
     
-    public boolean isEmpty()
+    public static interface MetaData<T> {
+      long getId();
+      long getVersion();
+      String getTypeRaw();
+      Class<T> getType();
+    }
+
+    boolean save();
+    void overwrite();
+    boolean delete();
+    
+    boolean isUpToDate();
+    boolean reload();
+    
+    public void update(Updater<T> updater);
+    public void lockAndUpdate(Updater<T> updater);
+    
+    @FunctionalInterface
+    public static interface Updater<T>
     {
-      return filters.isEmpty();
+      public void update(T object); 
     }
   }
   
