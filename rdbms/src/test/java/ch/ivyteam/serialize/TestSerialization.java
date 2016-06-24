@@ -2,40 +2,45 @@ package ch.ivyteam.serialize;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.junit.Test;
 
-import ch.ivyteam.java.object.store.Documents;
-import ch.ivyteam.java.object.store.MemoryDocumentPersistency;
+import ch.ivyteam.java.object.store.MemoryJsonStore;
+import ch.ivyteam.java.object.store.ObjectStore;
+import ch.ivyteam.java.object.store.serialize.AbstractSerializerTest;
+import ch.ivyteam.serialize.JavaTyping.Animal;
 import ch.ivyteam.serialize.JavaTyping.Elephant;
 import ch.ivyteam.serialize.JavaTyping.Labrador;
 import ch.ivyteam.serialize.JavaTyping.Lion;
 import ch.ivyteam.serialize.JavaTyping.Zoo;
 
-public class TestSerialization
+public class TestSerialization extends AbstractSerializerTest
 {
 
   @Test
   public void recursiveReferences()
   {
-    Documents<Recursion> docStore = storeOf(Recursion.class);
+    ObjectStore<Recursion> docStore = storeOf(Recursion.class);
     Recursion recursion = Recursion.createRecursion();
-    String key = "123";
-    docStore.persist(key, recursion);
+    Long key = 123l;
+    docStore.merge(key, recursion);
     
-    Recursion newRecursion = docStore.find("123");
+    Recursion newRecursion = docStore.find(key);
     assertThat(newRecursion.key).isEqualTo(recursion.key);
     assertThat(newRecursion.start.key).isEqualTo(recursion.start.key);
     assertThat(newRecursion.start.b.key).isEqualTo(recursion.start.b.key);
-    assertThat(newRecursion.start.b.a.b).isEqualTo(recursion.start.b.a.b);
+    assertThat(newRecursion.start.b).isEqualTo(newRecursion.start.b.a.b);
   }
   
   @Test
   public void javaTyping()
   {
-    Documents<Zoo> docStore = storeOf(Zoo.class);
+    ObjectStore<Zoo> docStore = storeOf(Zoo.class);
     Zoo zoo = JavaTyping.createZoo();
-    String key ="456";
-    docStore.persist(key, zoo);
+    Long key = 456l;
+    docStore.merge(key, zoo);
     
     Zoo newZoo = docStore.find(key);
     assertThat(newZoo).isNotNull();
@@ -46,19 +51,33 @@ public class TestSerialization
     assertThat(newZoo.c).isInstanceOf(Labrador.class);
     assertThat(((Labrador)newZoo.c).key).isEqualTo("Lassi");
     
-    assertThat(newZoo.d).isEqualTo(zoo.d);
-    assertThat(newZoo.e).isEqualTo(zoo.e);
-    assertThat(((Labrador)newZoo.e.get("first")).likesToPlayWith)
-    .isEqualTo(((Labrador)zoo.e.get("first")).likesToPlayWith);
+    Animal newBeethoven = newZoo.d.iterator().next();
+    assertThat(newZoo.e.get("first")).isSameAs(newBeethoven);
+    assertThat(newZoo.d).hasSameSizeAs(zoo.d);
+    Labrador newLabrador = (Labrador)newZoo.e.get("first");
+    Labrador labrado = (Labrador)zoo.e.get("first");
+    isEqual(newLabrador.likesToPlayWith, labrado.likesToPlayWith);
+  }
+  
+  {
+    assertThat(first).hasSameSizeAs(second);
+    Iterator<T> it1 = first.iterator();
+    Iterator<T> it2 = second.iterator();
+    for(;it1.hasNext();)
+    {
+      T e1 = it1.next();
+      T e2 = it2.next();
+      assertThat(e1).isEqualToComparingFieldByField(e2);
+    }
   }
   
   @Test
   public void sameReference()
   {
     SameReference reference = SameReference.createReferenceTest();
-    Documents<SameReference> docStore = storeOf(SameReference.class);
-    String key = "789";
-    docStore.persist(key, reference);
+    ObjectStore<SameReference> docStore = storeOf(SameReference.class);
+    Long key = 789l;
+    docStore.merge(key, reference);
     
     SameReference newRef = docStore.find(key);
     assertThat(newRef.key).isEqualTo("Start");
@@ -66,10 +85,9 @@ public class TestSerialization
     assertThat(newRef.ref1).isSameAs(newRef.ref2);
   }
   
-  private static <T> Documents<T> storeOf(Class<T> type)
+  private <T> ObjectStore<T> storeOf(Class<T> type)
   {
-    // switch to your real implementation!!!
-    return new MemoryDocumentPersistency().get(type, null);
+    return new MemoryJsonStore<>(getSerializer(type));
   }
   
 }

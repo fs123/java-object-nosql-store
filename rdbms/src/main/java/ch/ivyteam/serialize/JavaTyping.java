@@ -2,7 +2,7 @@ package ch.ivyteam.serialize;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +18,7 @@ public class JavaTyping {
 		Labrador beethoven = new Labrador("Bethoven");
 		beethoven.likesToPlayWith = Arrays.asList(z.c, z.c);
 		
-                z.d = new HashSet<>(Arrays.asList(beethoven, new Elephant("Graui")));
+                z.d = new LinkedHashSet<>(Arrays.asList(beethoven, new Elephant("Graui")));
 		z.e = new HashMap<>();
 		z.e.put("first", beethoven);
 		
