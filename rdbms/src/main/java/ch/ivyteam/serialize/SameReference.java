@@ -19,12 +19,14 @@ public class SameReference {
 	public TypeX ref1;
 	public TypeX ref2;
 	
+	public SameReference(){}
 	public SameReference(String key) {
 		this.key = key;
 	}
 	
 	public static class TypeX {
 		public String key;
+		public TypeX(){}
 		public TypeX(String key) {
 			this.key = key;
 		}

@@ -47,10 +47,10 @@ public class AbstractSerializerTest
             new JsonIOSerializer<>(type));
   }
   
-  private static class InMemorySerializer<T> implements Serializer<T>{
+  public static class InMemorySerializer<T> implements Serializer<T>{
     Map<Integer, T> fakeStore = new HashMap<>();
     
-    private InMemorySerializer(@SuppressWarnings("unused") Class<T> type)
+    public InMemorySerializer(@SuppressWarnings("unused") Class<T> type)
     {
     }
     

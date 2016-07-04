@@ -18,23 +18,27 @@ public class Recursion {
 		return r;
 	}
 	
-	public final String key;
+	public String key;
 	public TypeA start;
+	
+	public Recursion(){}
 	public Recursion(String key) {
 		this.key = key;
 	}
 	
 	public static class TypeA {
-		public final String key;
+		public String key;
 		public TypeB b;
+		public TypeA(){}
 		public TypeA(String key) {
 			this.key = key;
 		}
 	}
 
 	public static class TypeB {
-		public final String key;
+		public String key;
 		public TypeA a;
+		public TypeB(){}
 		public TypeB(String key) {
 			this.key = key;
 		}

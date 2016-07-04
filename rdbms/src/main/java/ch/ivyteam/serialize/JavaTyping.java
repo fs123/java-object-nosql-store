@@ -36,6 +36,8 @@ public class JavaTyping {
 
 	public static class Lion implements Animal {
 		public String key;
+		
+		public Lion(){}
 		public Lion(String key) {
 			this.key = key;
 		}
@@ -43,6 +45,8 @@ public class JavaTyping {
 	
 	public static class Elephant implements Animal {
 		public String key;
+		
+		public Elephant(){}
 		public Elephant(String key) {
 			this.key = key;
 		}
@@ -53,6 +57,7 @@ public class JavaTyping {
 		
 		public List<Animal> likesToPlayWith;
 		
+		public Labrador(){} // not needed for JsonIO!
 		public Labrador(String key) {
 			this.key = key;
 		}

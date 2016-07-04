@@ -2,6 +2,7 @@ package ch.ivyteam.serialize;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 import ch.ivyteam.java.object.store.MemoryJsonStore;
 import ch.ivyteam.java.object.store.ObjectStore;
 import ch.ivyteam.java.object.store.serialize.AbstractSerializerTest;
+import ch.ivyteam.java.object.store.serialize.Serializer;
 import ch.ivyteam.serialize.JavaTyping.Animal;
 import ch.ivyteam.serialize.JavaTyping.Elephant;
 import ch.ivyteam.serialize.JavaTyping.Labrador;
@@ -59,6 +61,7 @@ public class TestSerialization extends AbstractSerializerTest
     isEqual(newLabrador.likesToPlayWith, labrado.likesToPlayWith);
   }
   
+  private static <T> void isEqual(Collection<T> first, Collection<T> second)
   {
     assertThat(first).hasSameSizeAs(second);
     Iterator<T> it1 = first.iterator();
@@ -87,7 +90,24 @@ public class TestSerialization extends AbstractSerializerTest
   
   private <T> ObjectStore<T> storeOf(Class<T> type)
   {
-    return new MemoryJsonStore<>(getSerializer(type));
+      Serializer<T> serializer = getSerializerWithCorrectType(type);
+      return new MemoryJsonStore<>(serializer);
+  }
+
+  private <T> Serializer<T> getSerializerWithCorrectType(Class<T> type)
+  {
+    try
+    {
+      // get serializer with correct type the hacky way:
+      Constructor<?> constructor = getSerializer(type).getClass().getDeclaredConstructors()[0];
+      @SuppressWarnings("unchecked")
+      Serializer<T> serializer = (Serializer<T>) constructor.newInstance(type);
+      return serializer;
+    }
+    catch (Exception ex)
+    {
+      return null;
+    }
   }
   
 }
