@@ -1,6 +1,7 @@
 package ch.ivyteam.java.object.store.memory;
 
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData;
+import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessDataRepositoryExtended.Updater;
 import ch.ivyteam.java.object.store.ObjectStore;
 
 public class MemoryBusinessData<T> implements BusinessData<T>
@@ -38,14 +39,14 @@ public class MemoryBusinessData<T> implements BusinessData<T>
   }
 
   @Override
-  public boolean save()
+  public UpdateResult save()
   {
     overwrite();
-    return true;
+    return new MemoryUpdateResult();
   }
 
   @Override
-  public void overwrite()
+  public UpdateResult overwrite()
   {
     if (meta.getId() == null)
     {
@@ -55,13 +56,14 @@ public class MemoryBusinessData<T> implements BusinessData<T>
     {
       store.merge(meta.getId(), object);
     }
+    return new MemoryUpdateResult();
   }
 
   @Override
-  public boolean delete()
+  public UpdateResult delete()
   {
     store.delete(meta.getId());
-    return true;
+    return new MemoryUpdateResult();
   }
 
   @Override
@@ -71,27 +73,35 @@ public class MemoryBusinessData<T> implements BusinessData<T>
   }
 
   @Override
-  public boolean reload()
+  public UpdateResult reload()
   {
     if (meta.getId() != null)
     {
       object = store.find(meta.getId());
     }
-    return true;
+    return new MemoryUpdateResult();
   }
 
   @Override
-  public void update(ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData.Updater<T> updater)
+  public UpdateResult update(Updater<T> updater)
   {
-    updater.update(object);
-    save();
+  	boolean done = false;
+  	while(!done)
+  	{
+  		T o = store.find(meta.getId());
+  		updater.update(o);
+  		store.merge(meta.getId(), o);
+  		done = true; // merge could fail, because object was already modified
+  	}
+    return new MemoryUpdateResult();
   }
 
-  @Override
-  public void lockAndUpdate(
-          ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData.Updater<T> updater)
+  
+  private static class MemoryUpdateResult implements UpdateResult
   {
-    updater.update(object);
-    save();
+		@Override
+		public boolean successfully() {
+			return true;
+		}
   }
 }

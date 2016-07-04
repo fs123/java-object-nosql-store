@@ -12,8 +12,8 @@ import ch.ivyteam.fintech.Dossier;
 import ch.ivyteam.fintech.Person;
 import ch.ivyteam.fintech.RandomDossier;
 import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData;
-import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessData.Updater;
 import ch.ivyteam.java.object.store.memory.MemoryBusinessDataRepository;
+import ch.ivyteam.java.object.store.BusinessDataRepository.BusinessDataRepositoryExtended.Updater;
 
 public class TestBusinessDataRepository
 {
@@ -68,8 +68,8 @@ public class TestBusinessDataRepository
     BusinessData<Dossier> businessData = repository.create(RandomDossier.generate());
     businessData.save();
 
-    Thread t1 = new Thread(() -> {businessData.lockAndUpdate(deleteBeneficians());});
-    Thread t2 = new Thread(() -> {businessData.lockAndUpdate(modifyCpm());});
+    Thread t1 = new Thread(() -> {businessData.update(deleteBeneficians());});
+    Thread t2 = new Thread(() -> {businessData.update(modifyCpm());});
     t1.start();
     t2.start();
     t1.join();
