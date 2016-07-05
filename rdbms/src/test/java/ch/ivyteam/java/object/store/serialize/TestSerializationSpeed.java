@@ -20,6 +20,10 @@ public class TestSerializationSpeed extends AbstractSerializerTest
   public void gugus()
   {
     Serializer<Dossier> serializer = getSerializer(Dossier.class);
+    if (serializer instanceof JacksonSerializer)
+    { // proove that we're still fast :-)
+      serializer = new JacksonSerializer<>(Dossier.class);
+    }
     String json = serializer.serialize(dossier);
     serializer.deserialize(json);
     

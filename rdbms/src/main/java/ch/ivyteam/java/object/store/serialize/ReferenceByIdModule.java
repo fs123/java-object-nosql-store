@@ -28,28 +28,33 @@ import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
  * 
  * @author rew
  * @since 04.07.2016
- * @param <T>
  */
-public class ReferenceByIdModule<T> extends SimpleModule
+public class ReferenceByIdModule extends SimpleModule
 {
   private static final PropertyName ID_PROPERTY = new PropertyName("@id");
 
-  public ReferenceByIdModule(Class<T> type)
+  private static final ThreadLocal<IdGenerator> ID_GENERATOR = new ThreadLocal<>();
+  
+  public ReferenceByIdModule()
   {
-    IdGenerator idGenerator = new IdGenerator(type);
-    setSerializerModifier(new IdWriter(idGenerator));
-    setDeserializerModifier(new IdReader(idGenerator));
+    setSerializerModifier(new IdWriter());
+    setDeserializerModifier(new IdReader());
   }
 
+  public static void setRootTypeHint(Class<?> rootType)
+  {
+    if (rootType != null)
+    {
+      ID_GENERATOR.set(new IdGenerator(rootType));
+    }
+    else
+    {
+      ID_GENERATOR.set(null);
+    }
+  }
+  
   private static class IdWriter extends BeanSerializerModifier
   {
-    private final ObjectIdGenerator<?> idGenerator;
-  
-    public IdWriter(ObjectIdGenerator<?> generator)
-    {
-      this.idGenerator = generator;
-    }
-  
     @Override
     public BeanSerializerBuilder updateBuilder(SerializationConfig config, BeanDescription beanDesc,
             BeanSerializerBuilder builder)
@@ -60,20 +65,13 @@ public class ReferenceByIdModule<T> extends SimpleModule
     
     private ObjectIdWriter createObjectIdWriter(SerializationConfig config)
     {
-      JavaType idType = config.getTypeFactory().constructSimpleType(String.class, new JavaType[0]);
-      return ObjectIdWriter.construct(idType, ID_PROPERTY, idGenerator, false);
+      JavaType idType = config.constructType(String.class);
+      return ObjectIdWriter.construct(idType, ID_PROPERTY, ID_GENERATOR.get(), false);
     }
   }
 
   private static class IdReader extends BeanDeserializerModifier
   {
-    private final ObjectIdGenerator<?> generator;
-  
-    public IdReader(ObjectIdGenerator<?> generator)
-    {
-      this.generator = generator;
-    }
-    
     @Override
     public BeanDeserializerBuilder updateBuilder(DeserializationConfig config, BeanDescription beanDesc,
             BeanDeserializerBuilder builder)
@@ -85,11 +83,11 @@ public class ReferenceByIdModule<T> extends SimpleModule
   
     private ObjectIdReader createObjectIdReaderFor(DeserializationConfig config)
     {
-      JavaType idType = config.getTypeFactory().constructSimpleType(String.class, new JavaType[0]);
+      JavaType idType = config.constructType(String.class);
       JsonDeserializer<?> deser = new IdDeserializer();
       SettableBeanProperty idProp = null;
       SimpleObjectIdResolver resolver = new SimpleObjectIdResolver();
-      return ObjectIdReader.construct(idType, ID_PROPERTY, generator, deser, idProp, resolver);
+      return ObjectIdReader.construct(idType, ID_PROPERTY, ID_GENERATOR.get(), deser, idProp, resolver);
     }
     
     private static class IdDeserializer extends JsonDeserializer<String>
