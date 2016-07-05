@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.impl.ObjectIdWriter;
 
 /**
- * Writes and read virtual ID fields into every type. 
+ * Writes and reads virtual ID fields into every type. 
  * Solves stack overflow exceptions on back references without a single annotation
  * 
  * @author rew
@@ -43,7 +43,7 @@ public class ReferenceByIdModule<T> extends SimpleModule
 
   private static class IdWriter extends BeanSerializerModifier
   {
-    private ObjectIdGenerator<?> idGenerator;
+    private final ObjectIdGenerator<?> idGenerator;
   
     public IdWriter(ObjectIdGenerator<?> generator)
     {
@@ -67,7 +67,7 @@ public class ReferenceByIdModule<T> extends SimpleModule
 
   private static class IdReader extends BeanDeserializerModifier
   {
-    private ObjectIdGenerator<?> generator;
+    private final ObjectIdGenerator<?> generator;
   
     public IdReader(ObjectIdGenerator<?> generator)
     {
@@ -105,7 +105,7 @@ public class ReferenceByIdModule<T> extends SimpleModule
 
   private static class IdGenerator extends ObjectIdGenerator<String>
   {
-    private Class<?> scope;
+    private final Class<?> scope;
     private int id = 0;
   
     public IdGenerator(Class<?> scope)
